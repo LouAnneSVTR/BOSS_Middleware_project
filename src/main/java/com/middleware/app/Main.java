@@ -1,10 +1,8 @@
-
-
-import Entity.Boss;
-import Entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import entities.Boss;
+import entities.Player;
 
 /*TODO Faire une classe magie pour gérer des attaques (attaques de zones pour le boss + resistence/faiblesse au type)
 TODO Les dégats de zone doivent se syncroniser entre les threads
