@@ -42,9 +42,6 @@ public class Player extends Thread {
     public void takeDamage(int damage) {
         this.health -= damage;
         System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorRed(" took ") + ConsoleColors.WHITE_BRIGHT + damage + ConsoleColors.colorBlue(" damage. Health: ") + ConsoleColors.colorWhiteBright(Integer.toString(this.health)));
-        if (this.health <= 0) {
-            System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorRed(" is dead!"));
-        }
     }
     public int activateAbility(int indexAbility) {
         Ability ability = this.abilities.get(indexAbility);
