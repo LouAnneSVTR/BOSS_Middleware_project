@@ -4,9 +4,9 @@ import java.sql.Timestamp;
 
 //TODO changer la classe ability pour que ce soit un thread et que le joueur ne puisse utiliser qu'un seul thread à la fois (temps attaque)
 public class Ability {
-    private String name;
-    private int power;
-    private int cooldown; //value in second
+    private final String name;
+    private final int power;
+    private final int cooldown; //value in second
     private Timestamp creation_timestamp;
 
     public Ability(String name, int power, int cooldown) {
@@ -15,6 +15,7 @@ public class Ability {
         this.cooldown = cooldown;
     }
 
+    // ############################ GETTER & SETTER ############################
     public String getName() {
         return name;
     }
@@ -27,14 +28,13 @@ public class Ability {
         return cooldown;
     }
 
+    // ############################ FUNCTION ############################
     // Handles the use and cooldown logic
-    public int useAbility() {
+    public void useAbility() {
         if (isAvailable()) {
             this.creation_timestamp = new Timestamp(System.currentTimeMillis());
-            return 15;
         } else {
             System.out.println("Player needs time to reload his attack");
-            return 0;
         }
     }
 
