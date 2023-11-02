@@ -91,5 +91,9 @@ public class UDPGameWrapper {
         return checksum.getValue();
     }
 
-    // TO DO CLOSE THE SOCKET
+    public void close() {
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
+        }
+    }
 }
