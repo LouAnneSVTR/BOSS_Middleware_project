@@ -46,7 +46,7 @@ public class Player extends Thread {
     public int activateAbility(int indexAbility) {
         Ability ability = this.abilities.get(indexAbility);
 
-        ability.useAbility();
+        ability.useAbility(this.name);
         return ability.getPower();
     }
 
@@ -61,7 +61,7 @@ public class Player extends Thread {
 
         if (isAlivePlayer()) {
             this.boss.takeDamage(playerAttack);
-            System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorGreen(" attacked ") + ConsoleColors.colorPurple(this.boss.getNameBoss()) + ConsoleColors.colorBlue(" for ") + ConsoleColors.colorWhiteBright(Integer.toString(playerAttack)) + ConsoleColors.colorBlue(" damage."));
+            System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorGreen(" attacked ") + ConsoleColors.colorPurple(this.boss.getNameBoss()) + ConsoleColors.colorBlue(" for ") + ConsoleColors.colorWhiteBright(Integer.toString(playerAttack)) + ConsoleColors.colorBlue(" damage with ability ") + ConsoleColors.colorWhiteBright(this.abilities.get(indexAbility).getName()));
         }
     }
 
