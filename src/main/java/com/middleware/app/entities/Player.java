@@ -1,6 +1,7 @@
 package com.middleware.app.entities;
 
 import com.middleware.app.abilities.Ability;
+import com.middleware.app.colors.ConsoleColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,10 @@ public class Player extends Thread {
     // ############################ FUNCTION ############################
     public void takeDamage(int damage) {
         this.health -= damage;
-        System.out.println(name + " took " + damage + " damage. Health: " + this.health);
+        System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorRed(" took ") + ConsoleColors.WHITE_BRIGHT + damage + ConsoleColors.colorBlue(" damage. Health: ") + ConsoleColors.colorWhiteBright(Integer.toString(this.health)));
+        if (this.health <= 0) {
+            System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorRed(" is dead!"));
+        }
     }
     public int activateAbility(int indexAbility) {
         Ability ability = this.abilities.get(indexAbility);
@@ -51,7 +55,7 @@ public class Player extends Thread {
 
     public void restoreHealth(int heal) {
         this.health += heal;
-        System.out.println(this.name + " is healed " + heal + " pv. Health: " + this.health);
+        System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorBlue(" is ") + ConsoleColors.colorGreen("healed ") + ConsoleColors.colorWhiteBright(Integer.toString(heal)) + ConsoleColors.colorBlue(" pv. Health: ") + this.health);
     }
 
     public void attackBoss() {
@@ -59,8 +63,7 @@ public class Player extends Thread {
         int playerAttack = activateAbility(indexAbility);
 
         this.boss.takeDamage(playerAttack);
-        System.out.println(name + " attacked the boss for " + playerAttack + " damage.");
-
+        System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorGreen(" attacked ") + ConsoleColors.colorPurple(this.boss.getNameBoss()) + ConsoleColors.colorBlue(" for ") + ConsoleColors.colorWhiteBright(Integer.toString(playerAttack)) + ConsoleColors.colorBlue(" damage."));
     }
 
     // ############################ RUN ############################
@@ -79,9 +82,9 @@ public class Player extends Thread {
         }
 
         if (!this.boss.isAliveBoss()) {
-            System.out.println(this.name + " win!");
+            System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorGreen(" win!"));
         } else {
-            System.out.println(this.name + " has been defeated!");
+            System.out.println(ConsoleColors.colorYellowBold(this.name) + ConsoleColors.colorRed(" has been defeated!"));
         }
     }
 }

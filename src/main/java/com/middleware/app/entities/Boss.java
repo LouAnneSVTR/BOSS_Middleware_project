@@ -1,6 +1,7 @@
 package com.middleware.app.entities;
 
 import com.middleware.app.abilities.Ability;
+import com.middleware.app.colors.ConsoleColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +32,16 @@ public class Boss extends Thread {
         return this.health > 0;
     }
 
+    public String getNameBoss() {
+        return name;
+    }
+
     // ############################ FUNCTION ############################
     public synchronized void takeDamage(int damage) {
         this.health -= damage;
-        System.out.println(this.name + " took " + damage + " damage. Health: " + this.health);
+        System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorRed(" took ") + ConsoleColors.colorWhiteBright(Integer.toString(damage)) + ConsoleColors.colorBlue(" damage. Health: ") + ConsoleColors.colorWhiteBright(Integer.toString(this.health)));
         if (this.health <= 0) {
-            System.out.println("Boss defeated!");
+            System.out.println(ConsoleColors.colorPurple("Boss") + ConsoleColors.colorRed(" defeated!"));
         }
     }
 
@@ -55,7 +60,7 @@ public class Boss extends Thread {
         int damageDealt = activateAbility(indexAbility);
 
         randomPlayer.takeDamage(damageDealt);
-        System.out.println(this.name + " attacked " + randomPlayer.getNamePlayer() + " for " + damageDealt + " damage.");
+        System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorGreen(" attacked ") + ConsoleColors.colorYellowBold(randomPlayer.getNamePlayer()) + ConsoleColors.colorBlue(" for ") + ConsoleColors.colorWhiteBright(Integer.toString(damageDealt)) + ConsoleColors.colorBlue(" damage."));
 
         boolean isAlive = randomPlayer.isAlivePlayer();
 
@@ -80,9 +85,9 @@ public class Boss extends Thread {
         }
 
         if (this.health > 0) {
-            System.out.println(this.name + " win!");
+            System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorGreen(" win!"));
         } else {
-            System.out.println(this.name + " has been defeated!");
+            System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorRed(" has been defeated!"));
         }
 
     }
