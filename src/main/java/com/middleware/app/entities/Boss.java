@@ -59,8 +59,10 @@ public class Boss extends Thread {
         int indexAbility = new Random().nextInt(this.abilities.size());
         int damageDealt = activateAbility(indexAbility);
 
-        randomPlayer.takeDamage(damageDealt);
-        System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorGreen(" attacked ") + ConsoleColors.colorYellowBold(randomPlayer.getNamePlayer()) + ConsoleColors.colorBlue(" for ") + ConsoleColors.colorWhiteBright(Integer.toString(damageDealt)) + ConsoleColors.colorBlue(" damage."));
+        if (isAliveBoss()) {
+            randomPlayer.takeDamage(damageDealt);
+            System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorGreen(" attacked ") + ConsoleColors.colorYellowBold(randomPlayer.getNamePlayer()) + ConsoleColors.colorBlue(" for ") + ConsoleColors.colorWhiteBright(Integer.toString(damageDealt)) + ConsoleColors.colorBlue(" damage."));
+        }
 
         boolean isAlive = randomPlayer.isAlivePlayer();
 
