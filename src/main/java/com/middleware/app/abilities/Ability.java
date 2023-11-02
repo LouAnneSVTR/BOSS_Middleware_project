@@ -32,23 +32,27 @@ public class Ability {
 
     // ############################ FUNCTION ############################
     // Handles the use and cooldown logic
-    public void useAbility(String entityName) {
-        if (isAvailable(entityName)) {
+    public boolean useAbility(String entityName, int i) {
+
+        boolean isUsed = isAvailable(entityName, i);
+        if (isUsed) {
             this.creation_timestamp = new Timestamp(System.currentTimeMillis());
         } else {
-            System.out.println(ConsoleColors.colorRed("[" + entityName + "]") + ConsoleColors.colorBlue(" Ability ") + ConsoleColors.colorWhiteBright(this.name) + ConsoleColors.colorBlue(" needs time to reload his attack"));
+            System.out.println(ConsoleColors.colorRed(ConsoleColors.colorWhiteBright(i + " : ") + "[" + entityName + "]") + ConsoleColors.colorBlue(" Ability ") + ConsoleColors.colorWhiteBright(this.name) + ConsoleColors.colorBlue(" needs time to reload his attack"));
         }
+
+        return isUsed;
     }
 
     // Check if the ability's cooldown is complete
-    public boolean isAvailable(String entityName) {
+    public boolean isAvailable(String entityName, int i) {
         if (creation_timestamp == null) {
             return true;
         }
 
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
         long timeSinceLastUse = currentTime.getTime() - creation_timestamp.getTime();
-        System.out.println(ConsoleColors.colorWhiteBright("time : ") + ConsoleColors.colorRed("[" + entityName + "]") + ConsoleColors.colorGreen("[" + this.name + "]")+ ConsoleColors.colorWhiteBright(" : " + timeSinceLastUse));
+        System.out.println(ConsoleColors.colorWhiteBright(i + " : ") + ConsoleColors.colorWhiteBright("time : ") + ConsoleColors.colorRed("[" + entityName + "]") + ConsoleColors.colorGreen("[" + this.name + "]")+ ConsoleColors.colorWhiteBright(" : " + timeSinceLastUse));
         return (timeSinceLastUse >= (long) cooldown);
     }
 }

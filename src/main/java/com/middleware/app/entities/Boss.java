@@ -37,28 +37,33 @@ public class Boss extends Thread {
     }
 
     // ############################ FUNCTION ############################
-    public synchronized void takeDamage(int damage) {
+    public synchronized void takeDamage(int damage, int i) {
         this.health -= damage;
-        System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorRed(" took ") + ConsoleColors.colorWhiteBright(Integer.toString(damage)) + ConsoleColors.colorBlue(" damage. Health: ") + ConsoleColors.colorWhiteBright(Integer.toString(this.health)));
+        System.out.println(ConsoleColors.colorWhiteBright(i + " : ") + ConsoleColors.colorPurple(this.name) + ConsoleColors.colorRed(" took ") + ConsoleColors.colorWhiteBright(Integer.toString(damage)) + ConsoleColors.colorBlue(" damage. Health: ") + ConsoleColors.colorWhiteBright(Integer.toString(this.health)));
     }
 
-    public int activateAbility(int indexAbility) {
+    public int activateAbility(int indexAbility, int i) {
         Ability ability = this.abilities.get(indexAbility);
 
-        ability.useAbility(this.name);
-        return ability.getPower();
+        boolean isUsed = ability.useAbility(this.name, i);
+
+        if (isUsed) {
+            return ability.getPower();
+        } else {
+            return -1;
+        }
     }
 
-    private void attackPlayer() {
+    private void attackPlayer(int i) {
         int randomPlayerId = new Random().nextInt(this.players.size());
         Player randomPlayer = this.players.get(randomPlayerId);
 
         int indexAbility = new Random().nextInt(this.abilities.size());
-        int damageDealt = activateAbility(indexAbility);
+        int damageDealt = activateAbility(indexAbility, i);
 
-        if (isAliveBoss()) {
-            randomPlayer.takeDamage(damageDealt);
-            System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorGreen(" attacked ") + ConsoleColors.colorYellowBold(randomPlayer.getNamePlayer()) + ConsoleColors.colorBlue(" for ") + ConsoleColors.colorWhiteBright(Integer.toString(damageDealt)) + ConsoleColors.colorBlue(" damage with ability " + ConsoleColors.colorWhiteBright(this.abilities.get(indexAbility).getName())));
+        if (isAliveBoss() && damageDealt != -1) {
+            randomPlayer.takeDamage(damageDealt, i);
+            System.out.println(ConsoleColors.colorWhiteBright(i + " : ") + ConsoleColors.colorPurple(this.name) + ConsoleColors.colorGreen(" attacked ") + ConsoleColors.colorYellowBold(randomPlayer.getNamePlayer()) + ConsoleColors.colorBlue(" for ") + ConsoleColors.colorWhiteBright(Integer.toString(damageDealt)) + ConsoleColors.colorBlue(" damage with ability " + ConsoleColors.colorWhiteBright(this.abilities.get(indexAbility).getName())));
         }
 
         boolean isAlive = randomPlayer.isAlivePlayer();
@@ -71,16 +76,19 @@ public class Boss extends Thread {
     // ############################ RUN ############################
     @Override
     public void run() {
+        int i = 1;
         // Boucle des attaques (thread) envoyé sur les joueurs
         while (this.health > 0 && !this.players.isEmpty()) {
 
-            attackPlayer();
+            attackPlayer(i);
 
             try {
                 Thread.sleep(1500); // Delay between boss attacks
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            i++;
         }
 
         if (this.health > 0) {
