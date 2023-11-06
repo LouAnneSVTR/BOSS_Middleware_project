@@ -1,6 +1,6 @@
 package com.middleware.app.abilities;
 
-import com.middleware.app.colors.ConsoleColors;
+import com.middleware.app.utils.ConsoleColors;
 
 import java.sql.Timestamp;
 

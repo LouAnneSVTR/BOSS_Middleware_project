@@ -4,7 +4,7 @@ import com.middleware.app.models.abilities.Ability;
 
 public class Lightguardian extends Player {
 
-    private static final int DIVINE_STRIKE_ID = 1;
+    public static final int DIVINE_STRIKE_ID = 1;
     private static final int HOLY_SHIELD_ID = 2;
     private static final int BLESSED_HEALING_ID = 3;
     private static final int LIGHTS_JUDGMENT_ID = 4;
@@ -33,7 +33,7 @@ public class Lightguardian extends Player {
             return selectedAbility.useAbility();
         } else {
             // TO DO: Handle case where ability is on cooldown
-            return 0;
+            return -1;
         }
     }
 }

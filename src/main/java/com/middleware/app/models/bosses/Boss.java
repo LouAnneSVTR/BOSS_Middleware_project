@@ -4,13 +4,14 @@ import com.middleware.app.models.abilities.Ability;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public abstract class Boss {
 
-    private final String name;
+    protected final String name;
     public static final int BOSS_MAX_HEALTH = 100;
-    private int health;
-    private Map<Integer, Ability> abilities;
+    protected int health;
+    protected Map<Integer, Ability> abilities;
 
     public Boss(String name) {
         this.name = name;
@@ -24,7 +25,7 @@ public abstract class Boss {
         abilities.put(id, ability);
     }
 
-    public abstract void performAction(); // Implement boss logic for choosing and using abilities
+    public abstract int performAction(int id); // Implement boss logic for choosing and using abilities
 
     protected int getHealth() {
         return health;
@@ -33,6 +34,28 @@ public abstract class Boss {
     protected Map<Integer, Ability> getAbilities() {
         return abilities;
     }
+
+    public boolean isAlive() {
+        return health > 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Ability getAbility(int index) {
+        return this.abilities.get(index);
+    }
+
+    public int randomAbility() {
+        return new Random().nextInt(this.abilities.size()) + 1;
+    }
+
+    public String getNameAbility(int index) {
+        return this.abilities.get(index).getName();
+    }
+
+
 
     // TO DO...
 }

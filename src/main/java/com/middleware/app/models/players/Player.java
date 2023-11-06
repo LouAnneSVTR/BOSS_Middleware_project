@@ -4,8 +4,9 @@ import com.middleware.app.models.abilities.Ability;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
-abstract class Player {
+public abstract class Player {
 
     public static final int PLAYER_MAX_HEALTH = 100;
     private final String name;
@@ -44,6 +45,19 @@ abstract class Player {
 
     public String getName() {
         return name;
+    }
+
+    public String getNameAbility(int index) {
+        return this.abilities.get(index).getName();
+    }
+
+    public Ability getAbility(int index) {
+        return this.abilities.get(index);
+    }
+
+    public int randomAbility() {
+        int i = new Random().nextInt(this.abilities.size()) + 1;
+        return i;
     }
 
     // TO DO

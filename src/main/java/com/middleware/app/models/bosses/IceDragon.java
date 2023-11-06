@@ -1,6 +1,7 @@
 package com.middleware.app.models.bosses;
 
 import com.middleware.app.models.abilities.Ability;
+import com.middleware.app.utils.ConsoleColors;
 
 public class IceDragon extends Boss {
     private static final int FROST_BREATH_ID = 1;
@@ -17,13 +18,25 @@ public class IceDragon extends Boss {
 
 
     @Override
-    public void takeDamage(int damage) {
-
+    public synchronized void takeDamage(int damage) {
+        this.health -= damage;
+        System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorRed(" took ") + ConsoleColors.colorWhiteBright(Integer.toString(damage)) + ConsoleColors.colorBlue(" damage. Health: ") + ConsoleColors.colorWhiteBright(Integer.toString(this.health)));
     }
 
     @Override
-    public void performAction() {
+    public int performAction(int id) {
+        Ability selectedAbility = this.abilities.get(id);
 
+        if (selectedAbility == null) {
+            throw new IllegalArgumentException("Ability with ID " + id + " does not exist");
+        }
+
+        if (selectedAbility.isAvailable()) {
+            return selectedAbility.useAbility();
+        } else {
+            // TO DO: Handle case where ability is on cooldown
+            return -1;
+        }
     }
 }
 
