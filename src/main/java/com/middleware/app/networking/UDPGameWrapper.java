@@ -1,4 +1,4 @@
-package networking;
+package com.middleware.app.networking;
 
 import java.io.*;
 import java.net.*;
@@ -45,7 +45,7 @@ public class UDPGameWrapper {
     }
 
     // Receive packet with checksum
-    private byte[] receivePacket() throws IOException {
+    public byte[] receivePacket() throws IOException {
 
         byte[] buf = new byte[bufferSize];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
