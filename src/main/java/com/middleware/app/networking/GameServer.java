@@ -9,11 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GameServer {
 
-    private networking.UDPGameWrapper udpWrapper;
-    private Map<InetAddress, Integer> connectedPlayers;
+    private final com.middleware.app.networking.UDPGameWrapper udpWrapper;
+    private final Map<InetAddress, Integer> connectedPlayers;
 
     public GameServer(int port) throws IOException {
-        udpWrapper = new networking.UDPGameWrapper(port);
+        udpWrapper = new com.middleware.app.networking.UDPGameWrapper(port);
         connectedPlayers = new ConcurrentHashMap<>();
     }
 
