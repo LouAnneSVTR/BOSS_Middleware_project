@@ -1,15 +1,14 @@
 package com.middleware.app;
 
-import com.middleware.app.networking.GameServer;
-import java.io.IOException;
+import com.middleware.app.core.GameCore;
 
-/*TODO Faire une classe magie pour gérer des attaques (attaques de zones pour le boss + resistence/faiblesse au type)
-TODO Les dégats de zone doivent se syncroniser entre les threads
-*/
 public class Main {
 
     public static void main(String[] args) {
+        GameCore gameCore = new GameCore();
 
-
+        gameCore.startGame();
+        // TO DO
+        // - Starts the Game Core
     }
 }

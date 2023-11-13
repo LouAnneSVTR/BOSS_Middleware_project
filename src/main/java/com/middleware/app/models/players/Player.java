@@ -1,16 +1,19 @@
 package com.middleware.app.models.players;
 
 import com.middleware.app.models.abilities.Ability;
+import com.middleware.app.models.abilities.AbilitiesRank;
+import com.middleware.app.utils.TextFrame;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
-abstract class Player {
+public abstract class Player {
 
     public static final int PLAYER_MAX_HEALTH = 100;
     private final String name;
-    private int health;
-    protected Map<Integer, Ability> abilities; // Using a HashMap with ID as the key
+    protected int health;
+    protected Map<AbilitiesRank, Ability> abilities; // Using a HashMap with ID as the key
 
     public Player(String name) {
         this.name = name;
@@ -18,16 +21,13 @@ abstract class Player {
         this.abilities = new HashMap<>();
     }
 
-    public void addAbility(int id, Ability ability) {
+    public abstract void receiveDamage(int damage);
+
+    public void addAbility(AbilitiesRank id, Ability ability) {
         abilities.put(id, ability);
     }
 
-    public abstract int activateAbility(int id);
-
-    public void receiveDamage(int damage) {
-        health -= damage;
-        if (health < 0) health = 0;
-    }
+    public abstract int activateAbility(AbilitiesRank id);
 
     public void restoreHealth(int heal) {
         health += heal;
@@ -44,6 +44,19 @@ abstract class Player {
 
     public String getName() {
         return name;
+    }
+
+    public String getNameAbility(AbilitiesRank index) {
+        return this.abilities.get(index).getName();
+    }
+
+    public Ability getAbility(int index) {
+        return this.abilities.get(index);
+    }
+
+    public int randomAbility() {
+        int i = new Random().nextInt(this.abilities.size()) + 1;
+        return i;
     }
 
     // TO DO
