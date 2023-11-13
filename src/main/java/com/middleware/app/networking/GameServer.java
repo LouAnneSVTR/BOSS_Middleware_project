@@ -12,8 +12,8 @@ public class GameServer {
     private final com.middleware.app.networking.UDPGameWrapper udpWrapper;
     private final Map<InetAddress, Integer> connectedPlayers;
 
-    public GameServer(int port) throws IOException {
-        udpWrapper = new com.middleware.app.networking.UDPGameWrapper(port);
+    public GameServer(int port, int bufferSize) throws IOException {
+        udpWrapper = new com.middleware.app.networking.UDPGameWrapper(port, bufferSize);
         connectedPlayers = new ConcurrentHashMap<>();
     }
 
