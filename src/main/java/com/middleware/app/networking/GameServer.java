@@ -6,36 +6,43 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameServer {
+    private static final Logger LOGGER = Logger.getLogger(GameServer.class.getName());
 
-    private final com.middleware.app.networking.UDPGameWrapper udpWrapper;
+    private final UDPGameWrapper udpWrapper;
     private final Map<InetAddress, Integer> connectedPlayers;
 
     public GameServer(int port, int bufferSize) throws IOException {
-        udpWrapper = new com.middleware.app.networking.UDPGameWrapper(port, bufferSize);
+        udpWrapper = new UDPGameWrapper(port, bufferSize);
         connectedPlayers = new ConcurrentHashMap<>();
+        LOGGER.info("GameServer initialized on port " + port + " with buffer size " + bufferSize);
     }
 
     public void start() {
+        LOGGER.info("GameServer started and waiting for connections...");
+
         while (true) {
             try {
                 byte[] receivedData = udpWrapper.receivePacket();
-                InetAddress playerAddress = InetAddress.getByAddress(Arrays.copyOfRange(receivedData, 0, 4)); // 4 bytes pour l'adresse IP
-                int playerPort = ByteBuffer.wrap(Arrays.copyOfRange(receivedData, 4, 6)).getShort(); // 2 bytes pour le port
+                InetAddress playerAddress = InetAddress.getByAddress(Arrays.copyOfRange(receivedData, 0, 4));
+                int playerPort = ByteBuffer.wrap(Arrays.copyOfRange(receivedData, 4, 6)).getShort();
 
-                //Check if the player is connected
+                // Check if the player is connected
                 if (!connectedPlayers.containsKey(playerAddress)) {
                     connectedPlayers.put(playerAddress, playerPort);
                     udpWrapper.sendObject(playerAddress, playerPort, "La connexion a été établie correctement.");
+                    LOGGER.info("New player connected: " + playerAddress + ":" + playerPort);
                 } else {
-                    udpWrapper.sendObject(playerAddress, playerPort, "Le joueur été déjà connecté.");
+                    udpWrapper.sendObject(playerAddress, playerPort, "Le joueur était déjà connecté.");
+                    LOGGER.warning("Player reconnection attempt: " + playerAddress + ":" + playerPort);
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Error while receiving or processing packet", e);
             }
         }
     }
-
 }
