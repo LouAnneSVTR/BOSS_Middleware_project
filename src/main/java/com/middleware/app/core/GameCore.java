@@ -7,12 +7,17 @@ import com.middleware.app.models.bosses.Boss;
 import com.middleware.app.models.bosses.IceDragon;
 import com.middleware.app.models.players.Lightguardian;
 import com.middleware.app.models.players.Player;
+import com.middleware.app.utils.TextFrame;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class GameCore {
 
+    public static boolean activeTextArea = true;
     private final ArrayList<Worker> listThread;
+
 
     public GameCore() {
         this.listThread = new ArrayList<>();
@@ -27,9 +32,10 @@ public class GameCore {
 
         Boss boss = new IceDragon();
 
-        this.listThread.add(new WorkerPlayer(player1, boss));
-        this.listThread.add(new WorkerPlayer(player2, boss));
-        this.listThread.add(new WorkerBoss(boss, players));
+        WorkerPlayer workerPlayer = new WorkerPlayer(player1, boss, true);
+        this.listThread.add(workerPlayer);
+        this.listThread.add(new WorkerPlayer(player2, boss, false));
+        this.listThread.add(new WorkerBoss(boss, players, workerPlayer.getTextArea()));
     }
 
     public void startGame() {

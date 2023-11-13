@@ -1,6 +1,8 @@
 package com.middleware.app.models.bosses;
 
+import com.middleware.app.models.abilities.AbilitiesRankBoss;
 import com.middleware.app.models.abilities.Ability;
+import com.middleware.app.models.abilities.AbilitiesRank;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,9 +11,9 @@ import java.util.Random;
 public abstract class Boss {
 
     protected final String name;
-    public static final int BOSS_MAX_HEALTH = 100;
+    public static final int BOSS_MAX_HEALTH = 500;
     protected int health;
-    protected Map<Integer, Ability> abilities;
+    protected Map<AbilitiesRankBoss, Ability> abilities;
 
     public Boss(String name) {
         this.name = name;
@@ -21,17 +23,17 @@ public abstract class Boss {
 
     public abstract void takeDamage(int damage);
 
-    public void addAbility(int id, Ability ability) {
+    public void addAbility(AbilitiesRankBoss id, Ability ability) {
         abilities.put(id, ability);
     }
 
-    public abstract int performAction(int id); // Implement boss logic for choosing and using abilities
+    public abstract int performAction(AbilitiesRankBoss id); // Implement boss logic for choosing and using abilities
 
-    protected int getHealth() {
+    public int getHealth() {
         return health;
     }
 
-    protected Map<Integer, Ability> getAbilities() {
+    protected Map<AbilitiesRankBoss, Ability> getAbilities() {
         return abilities;
     }
 
@@ -47,13 +49,15 @@ public abstract class Boss {
         return this.abilities.get(index);
     }
 
-    public int randomAbility() {
-        return new Random().nextInt(this.abilities.size()) + 1;
+    public AbilitiesRankBoss randomAbility() {
+        return AbilitiesRankBoss.values()[new Random().nextInt(this.abilities.size()) + 1];
     }
 
-    public String getNameAbility(int index) {
+    public String getNameAbility(AbilitiesRankBoss index) {
         return this.abilities.get(index).getName();
     }
+
+
 
 
 

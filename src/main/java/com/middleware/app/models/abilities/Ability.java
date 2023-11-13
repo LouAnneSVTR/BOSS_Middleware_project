@@ -2,8 +2,7 @@ package com.middleware.app.models.abilities;
 
 import java.util.Random;
 
-public class Ability {
-    private final int id;
+public abstract class Ability {
     private final String name;
     private final int power;
     private final int cooldown; // Cooldown in seconds
@@ -12,18 +11,13 @@ public class Ability {
     private long lastUsedTimestamp;
     private static final Random random = new Random();
 
-    public Ability(int id, String name, int power, int cooldown, double critChance, double critMultiplier) {
-        this.id = id;
+    public Ability(String name, int power, int cooldown, double critChance, double critMultiplier) {
         this.name = name;
         this.power = power;
         this.cooldown = cooldown;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         this.lastUsedTimestamp = 0; // Not used yet
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
