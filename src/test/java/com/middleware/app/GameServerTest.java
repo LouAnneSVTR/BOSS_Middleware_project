@@ -10,9 +10,12 @@ public class GameServerTest {
     public static void main(String[] args) {
         int serverPort1 = 12346;
         int serverPort2 = 12345;
+        int serverPort = 11111;
         int bufferSize = 1024;
 
-        try {
+      /*  try {
+
+            //Double teste de serveur
             InetAddress serverAddress = InetAddress.getLocalHost();
             String message1 = "Hello, from Server 1!";
             String message2 = "Wesh from Server 2!";
@@ -23,17 +26,43 @@ public class GameServerTest {
             udpWrapper1.sendObject(serverAddress, serverPort2, message1);
             udpWrapper2.sendObject(serverAddress, serverPort1, message2);
 
-            byte[] responseData = udpWrapper1.receivePacket();
-            System.out.println("1 Receive packet from 2 : " + new String(responseData));
+            String responseData = (String) udpWrapper1.receiveObject();
+            System.out.println("1 Receive packet from 2 : " + responseData);
 
-            byte[] responseData2 = udpWrapper2.receivePacket();
-            System.out.println("2 Receive packet from 1 : " + new String(responseData2));
+            String responseData2 = (String) udpWrapper2.receiveObject();
+            System.out.println("2 Receive packet from 1 : " + responseData2);
 
             udpWrapper1.close();
             udpWrapper2.close();
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }*/
+
+
+        //test GameServer
+        try {
+            GameServer gameServer = new GameServer(serverPort, bufferSize, "MyGameServer");
+            gameServer.start();
+            Thread.sleep(30000);
+
+            UDPGameWrapper udpWrapper = new UDPGameWrapper(0, bufferSize);
+            InetAddress serverAddress = InetAddress.getLocalHost();
+            String connectionMessage = "Hello, Server! I'm a player.";
+
+            udpWrapper.sendObject(serverAddress, serverPort, connectionMessage);
+            String response = (String) udpWrapper.receiveObject();
+            System.out.println("Server response: " + response);
+
+            udpWrapper.close();
+            gameServer.stop();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }
