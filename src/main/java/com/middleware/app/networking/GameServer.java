@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 public class GameServer {
     private static final Logger LOGGER = Logger.getLogger(GameServer.class.getName());
-
     private final UDPGameWrapper udpWrapper;
     private final Map<InetAddress, Integer> connectedPlayers;
 

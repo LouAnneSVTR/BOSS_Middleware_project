@@ -2,8 +2,6 @@ package com.middleware.app.models.players;
 
 import com.middleware.app.models.abilities.Ability;
 import com.middleware.app.models.abilities.AbilitiesRank;
-import com.middleware.app.utils.TextFrame;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -13,7 +11,7 @@ public abstract class Player {
     public static final int PLAYER_MAX_HEALTH = 100;
     private final String name;
     protected int health;
-    protected Map<AbilitiesRank, Ability> abilities; // Using a HashMap with ID as the key
+    protected Map<AbilitiesRank, Ability> abilities;
 
     public Player(String name) {
         this.name = name;

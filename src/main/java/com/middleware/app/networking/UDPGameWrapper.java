@@ -12,7 +12,7 @@ public class UDPGameWrapper {
     private static final int CHECKSUM_SIZE = Long.BYTES;
     private DatagramSocket socket;
 
-    private final int bufferSize; // TO DO...
+    private final int bufferSize;
 
     public UDPGameWrapper(int port, int bufferSize) throws SocketException {
         socket = new DatagramSocket(port);
