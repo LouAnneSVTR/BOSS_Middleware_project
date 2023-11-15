@@ -27,18 +27,23 @@ public class UDPGameWrapper {
         objStream.writeObject(obj);
         objStream.flush();
 
+        byte[] serializedData = byteStream.toByteArray();
+        System.out.println("Serialized object data: " + Arrays.toString(serializedData));
+
         sendPacket(address, port, byteStream.toByteArray());
     }
 
     // Receive a serializable object
     public Serializable receiveObject() throws IOException, ClassNotFoundException {
         byte[] data = receivePacket();
+        
+        // Log the data before deserialization
+        System.out.println("Data before deserialization (should be just the object data): " + Arrays.toString(data));
 
         ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
         ObjectInputStream objStream = new ObjectInputStream(byteStream);
 
         Serializable receivedObject = (Serializable) objStream.readObject();
-
         System.out.println("Received Object Type: " + receivedObject.getClass().getName());
 
         return receivedObject;
@@ -50,7 +55,8 @@ public class UDPGameWrapper {
 
         ByteBuffer buffer = ByteBuffer.wrap(sendData);
         long checksumValue = buffer.getLong();
-
+        
+        System.out.println("Data to send (with checksum): " + Arrays.toString(sendData));
         System.out.println("Calculated Checksum (Client): " + checksumValue);
 
         DatagramPacket packet = new DatagramPacket(sendData, sendData.length, address, port);
@@ -62,12 +68,23 @@ public class UDPGameWrapper {
         byte[] buf = new byte[bufferSize];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
+
         try {
+        
+            System.out.println("Raw data (with checksum): " + Arrays.toString(Arrays.copyOf(packet.getData(), packet.getLength())));
+
             if (verifyChecksum(packet.getData(), packet.getLength())) {
                 ByteBuffer buffer = ByteBuffer.wrap(packet.getData());
                 buffer.position(CHECKSUM_SIZE); // Skip checksum bytes
+                
+                 // Log the data after the checksum has been skipped
+                System.out.println("Data after checksum removal (should not include checksum): " + Arrays.toString(Arrays.copyOfRange(packet.getData(), CHECKSUM_SIZE, packet.getLength())));
+            
                 byte[] actualData = new byte[packet.getLength() - CHECKSUM_SIZE];
                 buffer.get(actualData);
+            
+                // Log the actual data
+                System.out.println("Actual data (should match the sent message): " + Arrays.toString(actualData));
                 return actualData;
             } else {
                 throw new IOException("Checksum mismatch");
