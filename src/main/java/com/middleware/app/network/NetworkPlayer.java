@@ -15,14 +15,17 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class NetworkPlayer {
+public class NetworkPlayer implements Serializable {
 
     public static final int LOBBY_PORT = 5006;
     private final String pseudo;
     private final String ipAddress;
     private final int udpPort;
 
-    private final ServerUDP udpServer;
+    private transient ServerUDP udpServer;
+
+    // Add a serialVersionUID (recommended for Serializable classes)
+    private static final long serialVersionUID = 1L;
 
     public NetworkPlayer(String pseudo, int udpPort) throws SocketException {
         this.pseudo = pseudo;
@@ -64,11 +67,10 @@ public class NetworkPlayer {
             boolean response = lobby.joinLobby(this);
 
             if(!response) {
-                System.err.println("Failed to join lobby ...");
                 throw new RuntimeException("Failed to join lobby ...");
             }
 
-            System.out.println("Waiting for the game to start...");
+            System.out.println("Lobby Joined ! Waiting for the game to start...");
             lobby.waitForGameStart();
 
             return new Core(lobby.getPlayers(), this);

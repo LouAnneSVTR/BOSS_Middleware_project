@@ -5,11 +5,8 @@ import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.LightGuardian;
 import com.middleware.app.network.NetworkPlayer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,7 +26,9 @@ public class Core {
         otherPlayersMap = new HashMap<>();
 
         for (NetworkPlayer player : players) {
-            if (!player.equals(currentPlayer)) {
+
+            if (!Objects.equals(player.getPseudo(), currentPlayer.getPseudo()))
+            {
                 LightGuardian lightGuardian = new LightGuardian();
                 otherPlayersMap.put(player, lightGuardian);
             }

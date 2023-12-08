@@ -16,7 +16,7 @@ public class Main {
             String playerName = scanner.nextLine();
 
             System.out.println("Do you want to (1) Host a game or (2) Join a game?");
-            int choice = scanner.nextInt();
+            int choice = Integer.parseInt(scanner.nextLine());
 
             NetworkPlayer player = new NetworkPlayer(playerName, UDP_PORT);
             Core gameInitialized;
@@ -31,7 +31,8 @@ public class Main {
                 throw new RuntimeException("Invalid choice. Exiting.");
             }
 
-            // gameInitialized.startGameLoop();
+            System.out.println("Starting Game ...");
+            gameInitialized.startGameLoop();
 
         } catch (Exception e) {
             System.err.println("Game Failed: " + e);
