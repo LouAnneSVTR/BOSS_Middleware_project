@@ -1,5 +1,6 @@
 package com.middleware.app.others;
 
+/*
 import com.middleware.app.core.worker.WorkerPlayer;
 
 import javax.swing.*;
@@ -103,3 +104,4 @@ public class GamePanel extends JTextPane {
         this.player.attackBoss();
     }
 }
+*/

@@ -1,12 +1,9 @@
 package com.middleware.app.game.bosses;
 
-
 import com.middleware.app.game.abilities.AbilitiesRankBoss;
 import com.middleware.app.game.abilities.Ability;
 import com.middleware.app.game.abilities.AbilityBoss;
 import com.middleware.app.others.ConsoleColors;
-
-import static com.middleware.app.others.TextFrame.textArea;
 
 public class IceDragon extends Boss {
 
@@ -23,7 +20,6 @@ public class IceDragon extends Boss {
     public synchronized void takeDamage(int damage) {
         this.health -= damage;
         System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorRed(" took ") + ConsoleColors.colorWhiteBright(Integer.toString(damage)) + ConsoleColors.colorBlue(" damage. Health: ") + ConsoleColors.colorWhiteBright(Integer.toString(this.health)));
-        textArea.updateBossLife(this.health);
     }
 
     @Override

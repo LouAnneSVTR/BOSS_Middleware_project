@@ -3,7 +3,6 @@ package com.middleware.app.game.players;
 import com.middleware.app.game.abilities.AbilitiesRankPlayer;
 import com.middleware.app.game.abilities.Ability;
 import com.middleware.app.game.abilities.AbilityPlayer;
-import com.middleware.app.others.TextFrame;
 
 public class LightGuardian extends Player {
 
@@ -20,8 +19,6 @@ public class LightGuardian extends Player {
     public void receiveDamage(int damage) {
         this.health -= damage;
         if (health < 0) health = 0;
-        TextFrame.updateLifePlayer(this.health);
-
     }
 
     @Override

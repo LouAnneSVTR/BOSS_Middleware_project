@@ -1,5 +1,6 @@
 package com.middleware.app.others;
 
+/*
 import com.middleware.app.core.worker.WorkerPlayer;
 
 import javax.swing.*;
@@ -87,5 +88,7 @@ public class TextFrame extends JFrame {
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 }
+
+*/

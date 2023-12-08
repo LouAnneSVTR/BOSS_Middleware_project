@@ -43,6 +43,8 @@ public class NetworkPlayer {
             Registry registry = LocateRegistry.createRegistry(LOBBY_PORT);
             registry.rebind("Lobby", lobby);
 
+            System.out.println("Waiting for players ...");
+
             // Lobby is ready
             lobby.waitForGameStart();
             return new Core(lobby.getPlayers(), this);
