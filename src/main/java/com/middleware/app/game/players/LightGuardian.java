@@ -5,9 +5,9 @@ import com.middleware.app.game.abilities.Ability;
 import com.middleware.app.game.abilities.AbilityPlayer;
 import com.middleware.app.others.TextFrame;
 
-public class Lightguardian extends Player {
+public class LightGuardian extends Player {
 
-    public Lightguardian() {
+    public LightGuardian() {
         super("Light Guardian");
         // Initialize with standard Paladin abilities, assigning an ID to each one
         // For demonstration purposes, the critChance is 20% for damage abilities

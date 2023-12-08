@@ -102,6 +102,15 @@ public class ServerUDP {
         return checksum.getValue();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            close(); // Ensure the socket is closed
+        } finally {
+            super.finalize(); // Call the superclass finalize method
+        }
+    }
+
     public void close() {
         if (!socket.isClosed()) {
             socket.close();
