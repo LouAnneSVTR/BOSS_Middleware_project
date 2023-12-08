@@ -1,7 +1,7 @@
 package com.middleware.app;
 
-import com.middleware.app.networking.GameServer;
-import com.middleware.app.networking.UDPGameWrapper;
+import com.middleware.app.network.GameServer;
+import com.middleware.app.network.udp.ServerUDP;
 import java.io.IOException;
 import java.net.InetAddress;
 
@@ -48,7 +48,7 @@ public class GameServerTest {
             gameServer.start();
             Thread.sleep(30000);
 
-            UDPGameWrapper udpWrapper = new UDPGameWrapper(0, bufferSize);
+            ServerUDP udpWrapper = new ServerUDP(0, bufferSize);
             InetAddress serverAddress = InetAddress.getLocalHost();
             String connectionMessage = "Hello, Server! I'm a player.";
 

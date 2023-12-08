@@ -1,6 +1,6 @@
-package com.middleware.app.models.abilities;
+package com.middleware.app.game.abilities;
 
-public enum AbilitiesRank {
+public enum AbilitiesRankPlayer {
 
     NO_ATTACK_PLAYER,
     // Player abilities

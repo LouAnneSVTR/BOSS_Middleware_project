@@ -1,4 +1,4 @@
-package com.middleware.app.utils;
+package com.middleware.app.others;
 
 import com.middleware.app.core.worker.WorkerPlayer;
 
@@ -10,10 +10,9 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-import static com.middleware.app.models.abilities.AbilitiesRank.*;
-import static com.middleware.app.models.abilities.AbilitiesRank.LIGHTS_JUDGMENT_ID;
-import static com.middleware.app.models.bosses.Boss.BOSS_MAX_HEALTH;
-import static com.middleware.app.models.players.Player.PLAYER_MAX_HEALTH;
+import static com.middleware.app.game.abilities.AbilitiesRankPlayer.LIGHTS_JUDGMENT_ID;
+import static com.middleware.app.game.bosses.Boss.BOSS_MAX_HEALTH;
+import static com.middleware.app.game.players.Player.PLAYER_MAX_HEALTH;
 
 public class GamePanel extends JTextPane {
 

@@ -1,4 +1,4 @@
-package com.middleware.app.utils;
+package com.middleware.app.others;
 
 public class ConsoleColors {
     // Reset

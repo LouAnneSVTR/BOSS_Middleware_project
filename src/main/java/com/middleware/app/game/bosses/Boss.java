@@ -1,8 +1,7 @@
-package com.middleware.app.models.bosses;
+package com.middleware.app.game.bosses;
 
-import com.middleware.app.models.abilities.AbilitiesRankBoss;
-import com.middleware.app.models.abilities.Ability;
-import com.middleware.app.models.abilities.AbilitiesRank;
+import com.middleware.app.game.abilities.AbilitiesRankBoss;
+import com.middleware.app.game.abilities.Ability;
 
 import java.util.HashMap;
 import java.util.Map;

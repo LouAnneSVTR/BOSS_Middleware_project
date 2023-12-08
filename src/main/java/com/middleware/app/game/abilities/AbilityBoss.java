@@ -1,4 +1,4 @@
-package com.middleware.app.models.abilities;
+package com.middleware.app.game.abilities;
 
 public class AbilityBoss extends Ability {
     private final AbilitiesRankBoss id;

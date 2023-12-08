@@ -1,4 +1,4 @@
-package com.middleware.app.models.abilities;
+package com.middleware.app.game.abilities;
 
 public enum AbilitiesRankBoss {
     NO_ATTACK_BOSS,
