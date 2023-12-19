@@ -10,7 +10,7 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-import static com.middleware.app.game.abilities.AbilitiesRankPlayer.LIGHTS_JUDGMENT_ID;
+import static com.middleware.app.game.abilities.AbilitiesRankPlayer.*;
 import static com.middleware.app.game.bosses.Boss.BOSS_MAX_HEALTH;
 import static com.middleware.app.game.players.Player.PLAYER_MAX_HEALTH;
 

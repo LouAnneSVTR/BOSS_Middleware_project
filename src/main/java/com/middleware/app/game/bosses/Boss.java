@@ -62,4 +62,3 @@ public abstract class Boss {
 
     // TO DO...
 }
-

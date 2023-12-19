@@ -96,5 +96,4 @@ public class ConsoleColors {
     public static String colorPurple(String text) {
         return PURPLE + text;
     }
-
 }

@@ -54,7 +54,9 @@ public abstract class Player {
     }
 
     public int randomAbility() {
-        return new Random().nextInt(this.abilities.size()) + 1;
+        int i = new Random().nextInt(this.abilities.size()) + 1;
+        return i;
     }
-}
 
+    // TO DO
+}
