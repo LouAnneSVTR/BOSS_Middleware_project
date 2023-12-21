@@ -27,11 +27,11 @@ public class NetworkPlayer implements Serializable {
     // Add a serialVersionUID (recommended for Serializable classes)
     private static final long serialVersionUID = 1L;
 
-    public NetworkPlayer(String pseudo, int udpPort) throws SocketException {
+    public NetworkPlayer(String pseudo, int udpPort) {
         this.pseudo = pseudo;
         this.udpPort = udpPort;
         this.ipAddress = NetworkUtils.getLocalHostAddress();
-        this.udpServer = new ServerUDP(udpPort, 1024);
+        this.udpServer = null;
     }
 
     // Getters and Setters
@@ -81,7 +81,14 @@ public class NetworkPlayer implements Serializable {
         }
     }
 
+    public void initUdpServer() throws SocketException {
+        this.udpServer = new ServerUDP(udpPort, 1024);
+    }
+
     public Serializable rcvUdpObj() {
+
+        if(udpServer == null)
+            return false;
 
         try {
             return udpServer.receiveObject();
@@ -94,6 +101,9 @@ public class NetworkPlayer implements Serializable {
     }
 
     public boolean sendUdpObj(String destAddr, int destPort, Serializable data) {
+
+        if(udpServer == null)
+            return false;
 
         try {
 

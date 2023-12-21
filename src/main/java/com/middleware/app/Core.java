@@ -5,6 +5,8 @@ import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.LightGuardian;
 import com.middleware.app.network.NetworkPlayer;
 
+import java.io.Serializable;
+import java.net.SocketException;
 import java.util.*;
 
 import java.util.concurrent.ExecutorService;
@@ -14,7 +16,7 @@ public class Core {
     private final Map<NetworkPlayer, LightGuardian> otherPlayersMap;
     private final NetworkPlayer currentPlayer;
     private final LightGuardian currentPlayerCharacter;
-    private IceDragon boss;
+    private final IceDragon boss;
     private boolean isRunning;
     private final ExecutorService executorService;
 
@@ -39,19 +41,21 @@ public class Core {
         executorService = Executors.newFixedThreadPool(players.size());
     }
 
-    public synchronized void startGameLoop() throws InterruptedException {
+    public synchronized void startGameLoop() throws InterruptedException, SocketException {
 
         if (isRunning) {
             throw new IllegalStateException("Game loop already running");
         }
         isRunning = true;
 
+        currentPlayer.initUdpServer();
         startNetworkCommunication(otherPlayersMap.keySet());
         // Game logic goes here...
 
         while (isRunning) {
             // Example: Send test message from currentPlayer to others
             String message = "Test message from: " + currentPlayer.getPseudo();
+            System.out.println(message);
 
             for (NetworkPlayer otherPlayer : otherPlayersMap.keySet()) {
                 currentPlayer.sendUdpObj(otherPlayer.getIpAddress(), otherPlayer.getUdpPort(), message);
@@ -85,8 +89,19 @@ public class Core {
             while (!Thread.currentThread().isInterrupted()) {
 
                 // Receive and process messages
-                String test = (String) player.rcvUdpObj();
-                System.out.println("Received: " + test);
+                Serializable data = player.rcvUdpObj();
+
+                if(data == null)
+                    continue;
+
+                // Check if data is a String before casting
+                if (data instanceof String) {
+                    String test = (String) data;
+                    System.out.println("Received: " + test);
+                } else {
+                    // Handle other types of data or report an unexpected type
+                    System.out.println("Received data of unexpected type: " + data.getClass());
+                }
             }
 
         } catch (Exception e) {
