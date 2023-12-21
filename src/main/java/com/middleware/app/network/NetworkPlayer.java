@@ -97,7 +97,7 @@ public class NetworkPlayer implements Serializable {
 
         try {
 
-            InetAddress inetAddress = InetAddress.getByName(ipAddress);
+            InetAddress inetAddress = InetAddress.getByName(destAddr);
             udpServer.sendObject(inetAddress, destPort, data);
             return true;
 
