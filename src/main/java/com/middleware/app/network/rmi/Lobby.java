@@ -25,6 +25,9 @@ public class Lobby extends UnicastRemoteObject implements LobbyInterface {
             return -1;
         }
 
+        // To reflect changes on both sides as it will be done after by the calling player
+        int newId = players.size() + 1;
+        newPlayer.setPlayerId(newId);
         players.add(newPlayer);
 
         if (players.size() == MAX_PLAYERS) {
@@ -33,7 +36,7 @@ public class Lobby extends UnicastRemoteObject implements LobbyInterface {
             }
         }
 
-        return players.size();
+        return newId;
     }
 
     @Override

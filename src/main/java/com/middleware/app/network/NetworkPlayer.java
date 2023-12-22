@@ -12,7 +12,6 @@ import java.rmi.registry.Registry;
 
 public class NetworkPlayer implements Serializable {
 
-    public static final int LOBBY_PORT = 5006;
     private final String pseudo;
     private Integer playerId;
     private final String ipAddress;
@@ -32,53 +31,7 @@ public class NetworkPlayer implements Serializable {
     public String getIpAddress() { return ipAddress; }
     public int getUdpPort() { return udpPort; }
 
-    public Core hostGame() throws RuntimeException {
-
-        try {
-            Lobby lobby = new Lobby();
-            Registry registry = LocateRegistry.createRegistry(LOBBY_PORT);
-            registry.rebind("Lobby", lobby);
-
-            joinLobby(lobby);
-
-            return new Core(playerId, lobby.getPlayers());
-
-        } catch (Exception e) {
-            System.err.println("Host exception: " + e);
-            throw new RuntimeException("Failed to Host Lobby");
-        }
-    }
-
-    public Core joinGame(String host) throws RuntimeException {
-        try {
-
-            Registry registry = LocateRegistry.getRegistry(host, LOBBY_PORT);
-            LobbyInterface lobby = (LobbyInterface) registry.lookup("Lobby");
-
-            joinLobby(lobby);
-
-            return new Core(playerId, lobby.getPlayers());
-
-        } catch (Exception e) {
-            System.err.println("Client exception: " + e);
-            throw new RuntimeException("Failed to Join Lobby ...");
-        }
-    }
-
-    private void joinLobby(LobbyInterface lobby) throws RemoteException, InterruptedException {
-
-        int response = lobby.joinLobby(this);
-
-        if(response < 0) {
-            throw new RuntimeException("Failed to join lobby ...");
-        }
-
-        playerId = response;
-
-        System.out.printf("[%d] Lobby Joined ! Waiting for the game to start...\n", playerId);
-        lobby.waitForGameStart();
-    }
-
+    public void setPlayerId(Integer playerId) { this.playerId = playerId; }
     public Integer getPlayerId() {
         return playerId;
     }
