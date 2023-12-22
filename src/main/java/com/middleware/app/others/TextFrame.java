@@ -1,22 +1,24 @@
 package com.middleware.app.others;
 
-/*
-import com.middleware.app.core.worker.WorkerPlayer;
+import com.middleware.app.game.players.Player;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class TextFrame extends JFrame {
 
-    private final WorkerPlayer player;
+    private final Player player;
     public static GamePanel textArea;
 
 
 
-    public TextFrame(WorkerPlayer player) {
+    public TextFrame(Player player) {
         this.player = player;
 
         setTitle("KeyEvent Example");
@@ -63,7 +65,7 @@ public class TextFrame extends JFrame {
         textArea.updatePlayerLife(newLifePlayer);
     }
 
-    /*private void addColoredText() {
+    private void addColoredText() {
         StyledDocument doc = textArea.getStyledDocument();
 
         Style style = textArea.addStyle("RegularStyle", null);
@@ -90,5 +92,3 @@ public class TextFrame extends JFrame {
         }
     }
 }
-
-*/
