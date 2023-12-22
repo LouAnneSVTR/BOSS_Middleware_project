@@ -41,7 +41,7 @@ public class NetworkPlayer implements Serializable {
 
             joinLobby(lobby);
 
-            return new Core(lobby.getPlayers(), this);
+            return new Core(playerId, lobby.getPlayers());
 
         } catch (Exception e) {
             System.err.println("Host exception: " + e);
@@ -57,7 +57,7 @@ public class NetworkPlayer implements Serializable {
 
             joinLobby(lobby);
 
-            return new Core(lobby.getPlayers(), this);
+            return new Core(playerId, lobby.getPlayers());
 
         } catch (Exception e) {
             System.err.println("Client exception: " + e);

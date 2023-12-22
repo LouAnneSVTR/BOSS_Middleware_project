@@ -1,44 +1,27 @@
 package com.middleware.app;
 
-import com.middleware.app.game.bosses.IceDragon;
-import com.middleware.app.game.players.LightGuardian;
 import com.middleware.app.network.NetworkPlayer;
 import com.middleware.app.network.udp.GamePacket;
 import com.middleware.app.network.udp.GamePacketQueue;
 import com.middleware.app.network.udp.ServerUDP;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.*;
 
 public class Core {
-    private final Map<NetworkPlayer, LightGuardian> otherPlayersMap;
-    private final NetworkPlayer currentPlayer;
-    private final LightGuardian currentCharacter;
-    private final IceDragon boss;
     private volatile boolean isRunning;
     private final GamePacketQueue packetQueue = new GamePacketQueue();
     private Thread sendThread;
     private Thread receiveThread;
     private final transient ServerUDP udpServer;
 
-    public Core(List<NetworkPlayer> players, NetworkPlayer currentPlayer) throws SocketException {
+    private final EntityManager entityManager;
 
-        this.currentPlayer = currentPlayer;
-        this.currentCharacter = new LightGuardian();
+    public Core(Integer currentPlayerId, List<NetworkPlayer> players) throws SocketException {
 
-        otherPlayersMap = new HashMap<>();
-
-        for (NetworkPlayer player : players) {
-            if (!Objects.equals(player.getPseudo(), currentPlayer.getPseudo())) {
-                LightGuardian lightGuardian = new LightGuardian();
-                otherPlayersMap.put(player, lightGuardian);
-            }
-        }
-
-        boss = new IceDragon();
-        udpServer = new ServerUDP(currentPlayer.getUdpPort(), 1024);
+        this.entityManager = new EntityManager(currentPlayerId, players);
+        udpServer = new ServerUDP(entityManager.getCurrentPlayer().getUdpPort(), 1024);
     }
 
     public synchronized void startGameLoop() throws InterruptedException {
@@ -54,7 +37,7 @@ public class Core {
             // Game logic goes here
             // ...
 
-            Thread.sleep(2000);  // Adjust sleep time as needed
+            Thread.sleep(200);  // Adjust sleep time as needed
         }
 
         shutdownNetworkCommunication();
@@ -80,10 +63,16 @@ public class Core {
 
                 if (!packetQueue.isEmpty()) {
                     GamePacket packet = packetQueue.dequeue();
+                    Integer targetId = packet.getPlayerId();
+
                     // Send packet using UDP
-                  //  udpServer.sendObject(/* target address */, /* target port */, packet);
+                    InetAddress targetAddr = InetAddress.getByName(entityManager.getPlayerById(targetId).getIpAddress());
+                    int targetPort = entityManager.getPlayerById(targetId).getUdpPort();
+
+                    udpServer.sendObject(targetAddr, targetPort, packet);
                 }
-                Thread.sleep(1000);
+
+                Thread.sleep(5);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore interrupt status
