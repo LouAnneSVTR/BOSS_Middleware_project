@@ -1,7 +1,7 @@
 package com.middleware.app.others;
 
-/*
-import com.middleware.app.core.worker.WorkerPlayer;
+import com.middleware.app.game.abilities.AbilitiesRankPlayer;
+import com.middleware.app.game.players.Player;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -10,21 +10,24 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Stack;
 
-import static com.middleware.app.game.abilities.AbilitiesRankPlayer.LIGHTS_JUDGMENT_ID;
+import static com.middleware.app.game.abilities.AbilitiesRankPlayer.*;
 import static com.middleware.app.game.bosses.Boss.BOSS_MAX_HEALTH;
 import static com.middleware.app.game.players.Player.PLAYER_MAX_HEALTH;
 
 public class GamePanel extends JTextPane {
 
-    private final WorkerPlayer player;
+    private final Player player;
     private int bossLife;
     private int playerLife;
     private final Point positionBossLife;
     private final Point positionPlayerLife;
     private final int sizeFont;
 
-    public GamePanel(WorkerPlayer player) {
+    private Stack<AbilitiesRankPlayer> abilitiesStack;
+
+    public GamePanel(Player player) {
         this.player = player;
 
         this.bossLife = BOSS_MAX_HEALTH;
@@ -34,6 +37,8 @@ public class GamePanel extends JTextPane {
         this.positionPlayerLife = new Point(650, 150);
 
         this.sizeFont = 50;
+
+        this.abilitiesStack = new Stack<>();
     }
     public void addText(String text, Color color) throws BadLocationException {
         StyledDocument doc = this.getStyledDocument();
@@ -78,30 +83,28 @@ public class GamePanel extends JTextPane {
         switch (keyCode) {
             case KeyEvent.VK_A:
             {
-                this.player.setCurrentIndexAbilityUsed(DIVINE_STRIKE_ID);
+                this.abilitiesStack.push(DIVINE_STRIKE_ID);
                 //System.out.println(ConsoleColors.colorWhiteBright("Touche A : ") + ConsoleColors.colorRed(String.valueOf(this.player.getCurrentIndexAbilityUsed())));
                 break;
             }
             case KeyEvent.VK_Z:
             {
-                this.player.setCurrentIndexAbilityUsed(HOLY_SHIELD_ID);
+                this.abilitiesStack.push(HOLY_SHIELD_ID);
                 //System.out.println(ConsoleColors.colorWhiteBright("Touche Z : ") + ConsoleColors.colorRed(String.valueOf(this.player.getCurrentIndexAbilityUsed())));
                 break;
             }
             case KeyEvent.VK_E:
             {
-                this.player.setCurrentIndexAbilityUsed(BLESSED_HEALING_ID);
+                this.abilitiesStack.push(BLESSED_HEALING_ID);
                 //System.out.println(ConsoleColors.colorWhiteBright("Touche E : ") + ConsoleColors.colorRed(String.valueOf(this.player.getCurrentIndexAbilityUsed())));
                 break;
             }
             case KeyEvent.VK_R:
             {
-                this.player.setCurrentIndexAbilityUsed(LIGHTS_JUDGMENT_ID);
+                this.abilitiesStack.push(LIGHTS_JUDGMENT_ID);
                 //System.out.println(ConsoleColors.colorWhiteBright("Touche R : ") + ConsoleColors.colorRed(String.valueOf(this.player.getCurrentIndexAbilityUsed())));
                 break;
             }
         }
-        this.player.attackBoss();
     }
 }
-*/
