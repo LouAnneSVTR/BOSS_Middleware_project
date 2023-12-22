@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface LobbyInterface extends Remote {
-    boolean joinLobby(NetworkPlayer newPlayer) throws RemoteException;
+    int joinLobby(NetworkPlayer newPlayer) throws RemoteException;
     void waitForGameStart() throws RemoteException, InterruptedException;
     boolean isLobbyFull() throws RemoteException;
     List<NetworkPlayer> getPlayers() throws RemoteException;
