@@ -10,6 +10,7 @@ import com.middleware.app.network.udp.GamePacket;
 import com.middleware.app.network.udp.GamePacketQueue;
 import com.middleware.app.network.udp.ServerUDP;
 import com.middleware.app.ui.GamePanel;
+import com.middleware.app.ui.KeybindListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +28,8 @@ public class Core {
     private final EntityManager entityManager;
     private GamePanel gamePanel;
 
+    private KeybindListener keybindListener;
+
     public Core(Integer currentPlayerId, List<NetworkPlayer> players) throws SocketException {
 
         this.entityManager = new EntityManager(currentPlayerId, players);
@@ -40,40 +43,64 @@ public class Core {
 
         isRunning = true;
 
-       createAndShowGUI();
+        createAndShowGUI();
         startNetworkCommunication();
 
         while (isRunning) {
-
-            // TO DO !!!!!
-            // Example le joueur fait des degats au boss:
-            // if(abilityKeyBInd == divineStrike)
-
-            LightGuardian guardian = entityManager.getCurrentHero();
-            int dmg = guardian.activateAbility(AbilitiesRankPlayer.DIVINE_STRIKE_ID);
-            IceDragon boss = (IceDragon) entityManager.getBoss();
-
-            gamePanel.addLogText("You used: Divined Strike that did : " + dmg, Color.BLUE);
-            gamePanel.safeUpdateBossLife(boss.receiveDamage(dmg));
-
-            // Send to others:
-            GamePacket packet = new GamePacket(entityManager.getCurrentPlayer().getPlayerId(), GamePacket.OperationType.PLAYER_DO_DMG, dmg);
-            packetQueue.enqueue(packet);
-
-            Thread.sleep(2000);  // Adjust sleep time as needed
+            Integer keyCode = keybindListener.pollKey();
+            while (keyCode != null) {
+                handleKey(keyCode);
+                keyCode = keybindListener.pollKey();
+            }
         }
 
         shutdownNetworkCommunication();
     }
 
+    private void handleKey(Integer keyCode) {
+
+        LightGuardian guardian = entityManager.getCurrentHero();
+        int damage = 0;
+
+        switch (keyCode) {
+            case KeybindListener.KEY_DIVINE_STRIKE:
+                damage = guardian.activateAbility(AbilitiesRankPlayer.DIVINE_STRIKE_ID);
+                break;
+            case KeybindListener.KEY_HOLY_SHIELD:
+                damage = guardian.activateAbility(AbilitiesRankPlayer.HOLY_SHIELD_ID);
+                break;
+            case KeybindListener.KEY_BLESSED_HEALING:
+                damage = guardian.activateAbility(AbilitiesRankPlayer.BLESSED_HEALING_ID);
+                break;
+            case KeybindListener.KEY_LIGHTS_JUDGMENT:
+                damage = guardian.activateAbility(AbilitiesRankPlayer.LIGHTS_JUDGMENT_ID);
+                break;
+            default:
+        }
+
+        IceDragon boss = (IceDragon) entityManager.getBoss();
+        gamePanel.addLogText("You used: Divined Strike that did : " + damage, Color.BLUE);
+        gamePanel.safeUpdateBossLife(boss.receiveDamage(damage));
+
+        GamePacket packet = new GamePacket(entityManager.getCurrentPlayer().getPlayerId(), GamePacket.OperationType.PLAYER_DO_DMG, damage);
+        packetQueue.enqueue(packet);
+    }
+
     private void createAndShowGUI() {
-        JFrame frame = new JFrame("Game");
+        JFrame frame = new JFrame(entityManager.getCurrentPlayer().getPseudo());
         gamePanel = new GamePanel(Boss.BOSS_MAX_HEALTH, Player.PLAYER_MAX_HEALTH); // Max life values for boss and player
+
+        // Create the key listener
+        keybindListener = new KeybindListener();
+        frame.addKeyListener(keybindListener);
+        frame.setFocusable(true);
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.getContentPane().add(gamePanel);
+
         frame.pack();
         frame.setVisible(true);
+        frame.setFocusableWindowState(true);
     }
 
     private void startNetworkCommunication() {
@@ -96,12 +123,10 @@ public class Core {
 
                 if (!packetQueue.isEmpty()) {
                     GamePacket packet = packetQueue.dequeue();
-                    Integer targetId = packet.getPlayerId();
 
                     // Broadcast to other players:
                     for(NetworkPlayer player : entityManager.getOtherPlayers()) {
 
-                        // Send packet using UDP
                         InetAddress targetAddr = InetAddress.getByName(player.getIpAddress());
                         int targetPort = player.getUdpPort();
 
@@ -142,7 +167,7 @@ public class Core {
                 IceDragon boss = (IceDragon) entityManager.getBoss();
                 boss.receiveDamage(damage);
 
-                gamePanel.addLogText(entityManager.getPlayerById(playerId).getPseudo() + " used: Divined Strike that did : " + damage, Color.ORANGE);
+                gamePanel.addLogText(entityManager.getPlayerById(playerId).getPseudo() + "attacked for: " + damage, Color.ORANGE);
                 gamePanel.safeUpdateBossLife(boss.receiveDamage(damage));
                 break;
             default:
