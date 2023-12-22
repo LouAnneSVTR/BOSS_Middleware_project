@@ -3,6 +3,8 @@ package com.middleware.app;
 import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.LightGuardian;
 import com.middleware.app.network.NetworkPlayer;
+import com.middleware.app.network.udp.GamePacket;
+import com.middleware.app.network.udp.GamePacketQueue;
 import com.middleware.app.network.udp.ServerUDP;
 
 import java.io.Serializable;
@@ -16,6 +18,7 @@ public class Core {
     private final LightGuardian currentCharacter;
     private final IceDragon boss;
     private volatile boolean isRunning;
+    private final GamePacketQueue packetQueue = new GamePacketQueue();
     private Thread sendThread;
     private Thread receiveThread;
     private final transient ServerUDP udpServer;
@@ -75,14 +78,12 @@ public class Core {
         try {
             while (!Thread.currentThread().isInterrupted()) {
 
-                String message = "Test message from: " + currentPlayer.getPseudo();
-
-                for (NetworkPlayer otherPlayer : otherPlayersMap.keySet()) {
-                    InetAddress destAddr = InetAddress.getByName(otherPlayer.getIpAddress());
-                    udpServer.sendObject(destAddr, otherPlayer.getUdpPort(), message);
+                if (!packetQueue.isEmpty()) {
+                    GamePacket packet = packetQueue.dequeue();
+                    // Send packet using UDP
+                  //  udpServer.sendObject(/* target address */, /* target port */, packet);
                 }
-
-                Thread.sleep(1000);  // Adjust sending interval as needed
+                Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore interrupt status
@@ -94,18 +95,19 @@ public class Core {
     private void receiveData() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                // Recevoir les données UDP
-                Serializable data = udpServer.receiveObject();
-                // Traiter les données reçues
-                System.out.println("Received data: " + data);
 
-                Thread.sleep(200);
+                // Receive packet
+                GamePacket packet = (GamePacket) udpServer.receiveObject();
+                // Process packet or enqueue it for processing
+                processReceivedPacket(packet);
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore interrupt status
         } catch (Exception e) {
             System.err.println("Error in receiving data: " + e.getMessage());
         }
+    }
+
+    private void processReceivedPacket(GamePacket packet) {
+        // Implement packet processing logic
     }
 }
 
