@@ -8,7 +8,7 @@ public class GamePacket implements Serializable {
     private final int value;
 
     public enum OperationType {
-        BOSS_DO_DMG, TAKE_DMG
+        BOSS_DO_DMG, PLAYER_DO_DMG, ABILITY
     }
 
     public GamePacket(int playerId, OperationType operation, int value) {

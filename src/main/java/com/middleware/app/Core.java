@@ -1,5 +1,7 @@
 package com.middleware.app;
 
+import com.middleware.app.game.bosses.IceDragon;
+import com.middleware.app.game.players.Player;
 import com.middleware.app.network.NetworkPlayer;
 import com.middleware.app.network.udp.GamePacket;
 import com.middleware.app.network.udp.GamePacketQueue;
@@ -96,7 +98,21 @@ public class Core {
     }
 
     private void processReceivedPacket(GamePacket packet) {
-        // Implement packet processing logic
+        int playerId = packet.getPlayerId();
+        GamePacket.OperationType operation = packet.getOperation();
+        int damage = packet.getValue();
+
+        switch (operation) {
+            case BOSS_DO_DMG:
+                Player player = entityManager.getCurrentHero(playerId);
+                player.receiveDamage(damage);
+                break;
+            case PLAYER_DO_DMG:
+                IceDragon boss = (IceDragon) entityManager.getBoss();
+                boss.receiveDamage(damage);
+                break;
+            default:
+                System.err.println("Unknown operation in received packet");
+        }
     }
 }
-

@@ -33,12 +33,12 @@ public class EntityManager {
         return players.get(currentPlayerId);
     }
 
-    public LightGuardian getCurrentHero() {
-        return heroes.get(currentPlayerId);
+    public LightGuardian getCurrentHero(Integer id) {
+        return heroes.get(id);
     }
 
     public NetworkPlayer getPlayerById(Integer id) {
-        return players.get(currentPlayerId);
+        return players.get(id);
     }
 
     public LightGuardian getHeroById(Integer id) {

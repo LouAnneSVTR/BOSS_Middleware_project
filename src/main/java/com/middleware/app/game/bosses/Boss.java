@@ -20,11 +20,11 @@ public abstract class Boss {
         this.abilities = new HashMap<>();
     }
 
-    public abstract void takeDamage(int damage);
-
     public void addAbility(AbilitiesRankBoss id, Ability ability) {
         abilities.put(id, ability);
     }
+
+    public abstract void receiveDamage(int damage);
 
     public abstract int performAction(AbilitiesRankBoss id); // Implement boss logic for choosing and using abilities
 
