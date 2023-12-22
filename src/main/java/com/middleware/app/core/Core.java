@@ -1,12 +1,15 @@
 package com.middleware.app.core;
 
+import com.middleware.app.game.bosses.Boss;
 import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.Player;
 import com.middleware.app.network.NetworkPlayer;
 import com.middleware.app.network.udp.GamePacket;
 import com.middleware.app.network.udp.GamePacketQueue;
 import com.middleware.app.network.udp.ServerUDP;
+import com.middleware.app.ui.GamePanel;
 
+import javax.swing.*;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.*;
@@ -19,6 +22,7 @@ public class Core {
     private final transient ServerUDP udpServer;
 
     private final EntityManager entityManager;
+    private GamePanel gamePanel;
 
     public Core(Integer currentPlayerId, List<NetworkPlayer> players) throws SocketException {
 
@@ -33,6 +37,7 @@ public class Core {
 
         isRunning = true;
 
+        SwingUtilities.invokeLater(this::createAndShowGUI);
         startNetworkCommunication();
 
         while (isRunning) {
@@ -43,6 +48,16 @@ public class Core {
         }
 
         shutdownNetworkCommunication();
+    }
+
+    private void createAndShowGUI() {
+        JFrame frame = new JFrame("Game");
+        gamePanel = new GamePanel(Boss.BOSS_MAX_HEALTH, Player.PLAYER_MAX_HEALTH); // Max life values for boss and player
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.getContentPane().add(gamePanel);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     private void startNetworkCommunication() {

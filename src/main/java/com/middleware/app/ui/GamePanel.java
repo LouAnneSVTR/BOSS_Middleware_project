@@ -11,11 +11,16 @@ public class GamePanel extends JPanel {
     private int bossLife;
     private int playerLife;
 
+    // Object for intrinsic lock
+    private final Object lifeLock = new Object();
+
     public GamePanel(int maxBossLife, int maxPlayerLife) {
         this.maxBossLife = maxBossLife;
         this.maxPlayerLife = maxPlayerLife;
-        this.bossLife = maxBossLife;
-        this.playerLife = maxPlayerLife;
+        synchronized (lifeLock) {
+            this.bossLife = maxBossLife;
+            this.playerLife = maxPlayerLife;
+        }
 
         setLayout(new BorderLayout());
 
@@ -30,10 +35,18 @@ public class GamePanel extends JPanel {
         JPanel lifeBarPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
+                int localBossLife, localPlayerLife;
+
+                synchronized (lifeLock) {
+                    localBossLife = bossLife;
+                    localPlayerLife = playerLife;
+                }
+
                 super.paintComponent(g);
-                // Display life bars
-                displayLifeBar(g, playerLife, maxPlayerLife, 10, 5, Color.GREEN, "Player");
-                displayLifeBar(g, bossLife, maxBossLife, 10, 35, Color.RED, "Boss");
+
+                // Display life bars using local variables
+                displayLifeBar(g, localPlayerLife, maxPlayerLife, 10, 5, Color.GREEN, "Player");
+                displayLifeBar(g, localBossLife, maxBossLife, 10, 35, Color.RED, "Boss");
             }
         };
         lifeBarPanel.setPreferredSize(new Dimension(600, 60));
@@ -54,14 +67,14 @@ public class GamePanel extends JPanel {
         });
     }
 
-    public void updateBossLife(int newBossLife) {
-        bossLife = newBossLife;
-        repaint();
+    // Thread-safe method to update boss life
+    public void safeUpdateBossLife(int newBossLife) {
+        SwingUtilities.invokeLater(() -> updateBossLife(newBossLife));
     }
 
-    public void updatePlayerLife(int newPlayerLife) {
-        playerLife = newPlayerLife;
-        repaint();
+    // Thread-safe method to update player life
+    public void safeUpdatePlayerLife(int newPlayerLife) {
+        SwingUtilities.invokeLater(() -> updatePlayerLife(newPlayerLife));
     }
 
     private void displayLifeBar(Graphics g, int currentLife, int maxLife, int x, int y, Color color, String label) {
@@ -86,5 +99,19 @@ public class GamePanel extends JPanel {
         // Draw the label and the life text
         String lifeText = label + ": " + currentLife + "/" + maxLife;
         g.drawString(lifeText, x + 5, y + barHeight - 5);
+    }
+
+    private void updateBossLife(int newBossLife) {
+        synchronized (lifeLock) {
+            bossLife = newBossLife;
+        }
+        repaint();
+    }
+
+    private void updatePlayerLife(int newPlayerLife) {
+        synchronized (lifeLock) {
+            playerLife = newPlayerLife;
+        }
+        repaint();
     }
 }
