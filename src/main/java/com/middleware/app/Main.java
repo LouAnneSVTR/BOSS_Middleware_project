@@ -1,5 +1,6 @@
 package com.middleware.app;
 
+import com.middleware.app.core.Core;
 import com.middleware.app.network.NetworkPlayer;
 import java.util.Scanner;
 

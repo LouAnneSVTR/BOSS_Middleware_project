@@ -1,4 +1,4 @@
-package com.middleware.app;
+package com.middleware.app.core;
 
 import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.Player;

@@ -1,51 +1,44 @@
 package com.middleware.app;
 
-import com.middleware.app.game.players.LightGuardian;
+import com.middleware.app.game.bosses.Boss;
 import com.middleware.app.game.players.Player;
-import com.middleware.app.network.NetworkPlayer;
-import com.middleware.app.others.GamePanel;
-import com.middleware.app.others.TextFrame;
+import com.middleware.app.ui.GamePanel;
 
-import java.util.Scanner;
-
-import static com.middleware.app.Main.UDP_PORT;
+import javax.swing.*;
+import java.awt.*;
 
 public class MainTest {
     public static void main(String[] args) {
-        try {
-            Player playerClass = new LightGuardian();
-            TextFrame display = new TextFrame(playerClass);
+        SwingUtilities.invokeLater(() -> {
+            // Créer la fenêtre principale
+            JFrame frame = new JFrame("Game Test");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            Scanner scanner = new Scanner(System.in);
+            // Créer le panel de jeu
+            GamePanel gamePanel = new GamePanel(Player.PLAYER_MAX_HEALTH, Boss.BOSS_MAX_HEALTH);
+            gamePanel.setPreferredSize(new Dimension(600, 400));
 
-            System.out.print("Enter your player name: ");
-            String playerName = scanner.nextLine();
+            // Ajouter le panel au frame
+            frame.add(gamePanel);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
 
-            System.out.println("Do you want to (1) Host a game or (2) Join a game?");
-            int choice = Integer.parseInt(scanner.nextLine());
+            // Simuler quelques actions
+            simulateGameActions(gamePanel);
+        });
+    }
 
-            NetworkPlayer player = new NetworkPlayer(playerName, UDP_PORT);
-            Core gameInitialized;
+    private static void simulateGameActions(GamePanel gamePanel) {
+        // Simuler des logs et des mises à jour de vie
+        SwingUtilities.invokeLater(() -> {
+            gamePanel.addLogText("Le jeu commence...", Color.BLACK);
+            gamePanel.updatePlayerLife(80); // Exemple: le joueur perd des points de vie
+            gamePanel.updateBossLife(450); // Exemple: le boss perd des points de vie
 
-
-
-            if (choice == 1) {
-                gameInitialized = player.hostGame();
-            } else if (choice == 2) {
-                System.out.print("Enter the host's IP address: ");
-                String host = scanner.nextLine();
-                gameInitialized = player.joinGame(host);
-            } else {
-                throw new RuntimeException("Invalid choice. Exiting.");
-            }
-
-            System.out.println("Starting Game ...");
-            gameInitialized.startGameLoop();
-
-
-
-        } catch (Exception e) {
-            System.err.println("Game Failed: " + e);
-        }
+            gamePanel.addLogText("Le joueur attaque le boss!", Color.BLUE);
+            gamePanel.addLogText("Le boss réplique!", Color.RED);
+        });
     }
 }
+

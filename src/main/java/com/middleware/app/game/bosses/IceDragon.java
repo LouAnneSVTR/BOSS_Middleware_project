@@ -3,7 +3,7 @@ package com.middleware.app.game.bosses;
 import com.middleware.app.game.abilities.AbilitiesRankBoss;
 import com.middleware.app.game.abilities.Ability;
 import com.middleware.app.game.abilities.AbilityBoss;
-import com.middleware.app.others.ConsoleColors;
+import com.middleware.app.ui.ConsoleColors;
 
 public class IceDragon extends Boss {
 

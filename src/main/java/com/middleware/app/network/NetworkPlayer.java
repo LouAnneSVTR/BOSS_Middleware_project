@@ -1,6 +1,6 @@
 package com.middleware.app.network;
 
-import com.middleware.app.Core;
+import com.middleware.app.core.Core;
 import com.middleware.app.network.rmi.Lobby;
 import com.middleware.app.network.rmi.LobbyInterface;
 import com.middleware.app.network.utils.NetworkUtils;

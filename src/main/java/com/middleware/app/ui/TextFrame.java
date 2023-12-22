@@ -1,4 +1,4 @@
-package com.middleware.app.others;
+package com.middleware.app.ui;
 
 import com.middleware.app.game.players.Player;
 
@@ -13,6 +13,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+/*
 public class TextFrame extends JFrame implements ComponentListener {
 
     private final Player player;
@@ -129,3 +130,4 @@ public class TextFrame extends JFrame implements ComponentListener {
         }
     }
 }
+*/
