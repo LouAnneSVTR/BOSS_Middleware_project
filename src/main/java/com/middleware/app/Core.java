@@ -1,96 +1,110 @@
 package com.middleware.app;
 
-import com.middleware.app.game.abilities.AbilitiesRankPlayer;
 import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.LightGuardian;
 import com.middleware.app.network.NetworkPlayer;
+import com.middleware.app.network.udp.ServerUDP;
 
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.*;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Core {
     private final Map<NetworkPlayer, LightGuardian> otherPlayersMap;
     private final NetworkPlayer currentPlayer;
-    private final LightGuardian currentPlayerCharacter;
-    private IceDragon boss;
-    private boolean isRunning;
-    private final ExecutorService executorService;
+    private final LightGuardian currentCharacter;
+    private final IceDragon boss;
+    private volatile boolean isRunning;
+    private Thread sendThread;
+    private Thread receiveThread;
+    private final transient ServerUDP udpServer;
 
-    public Core(List<NetworkPlayer> players, NetworkPlayer currentPlayer) {
+    public Core(List<NetworkPlayer> players, NetworkPlayer currentPlayer) throws SocketException {
 
         this.currentPlayer = currentPlayer;
-        this.currentPlayerCharacter = new LightGuardian();
+        this.currentCharacter = new LightGuardian();
 
         otherPlayersMap = new HashMap<>();
 
         for (NetworkPlayer player : players) {
-
-            if (!Objects.equals(player.getPseudo(), currentPlayer.getPseudo()))
-            {
+            if (!Objects.equals(player.getPseudo(), currentPlayer.getPseudo())) {
                 LightGuardian lightGuardian = new LightGuardian();
                 otherPlayersMap.put(player, lightGuardian);
             }
         }
-        System.out.println("Other Players Size: " + otherPlayersMap.size());
 
         boss = new IceDragon();
-        executorService = Executors.newFixedThreadPool(players.size());
+        udpServer = new ServerUDP(currentPlayer.getUdpPort(), 1024);
     }
 
     public synchronized void startGameLoop() throws InterruptedException {
-
         if (isRunning) {
             throw new IllegalStateException("Game loop already running");
         }
+
         isRunning = true;
 
-        startNetworkCommunication(otherPlayersMap.keySet());
-        // Game logic goes here...
+        startNetworkCommunication();
 
         while (isRunning) {
-            // Example: Send test message from currentPlayer to others
-            String message = "Test message from: " + currentPlayer.getPseudo();
+            // Game logic goes here
+            // ...
 
-            for (NetworkPlayer otherPlayer : otherPlayersMap.keySet()) {
-                currentPlayer.sendUdpObj(otherPlayer.getIpAddress(), otherPlayer.getUdpPort(), message);
-            }
-
-            // ===============================
-            // TO DO: VOIR COMMENT ON ORGANISE LECHANGE DE DONNÉES ET LA GAME LOGIQUE
-            int dmg = currentPlayerCharacter.activateAbility(AbilitiesRankPlayer.DIVINE_STRIKE_ID);
-            boss.takeDamage(dmg);
-            // ===============================
-
-            Thread.sleep(2000);
+            Thread.sleep(2000);  // Adjust sleep time as needed
         }
 
         shutdownNetworkCommunication();
     }
 
-    private void startNetworkCommunication(Set<NetworkPlayer> players) {
-        for (NetworkPlayer player : players) {
-            executorService.submit(() -> handleNetworkCommunication(player));
-        }
+    private void startNetworkCommunication() {
+        sendThread = new Thread(this::sendData);
+        receiveThread = new Thread(this::receiveData);
+
+        sendThread.start();
+        receiveThread.start();
     }
 
     private void shutdownNetworkCommunication() {
-        executorService.shutdownNow();
+        isRunning = false;
+        sendThread.interrupt();
+        receiveThread.interrupt();
     }
 
-    private void handleNetworkCommunication(NetworkPlayer player) {
+    private void sendData() {
         try {
-
             while (!Thread.currentThread().isInterrupted()) {
 
-                // Receive and process messages
-                String test = (String) player.rcvUdpObj();
-                System.out.println("Received: " + test);
-            }
+                String message = "Test message from: " + currentPlayer.getPseudo();
 
+                for (NetworkPlayer otherPlayer : otherPlayersMap.keySet()) {
+                    InetAddress destAddr = InetAddress.getByName(otherPlayer.getIpAddress());
+                    udpServer.sendObject(destAddr, otherPlayer.getUdpPort(), message);
+                }
+
+                Thread.sleep(1000);  // Adjust sending interval as needed
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupt status
         } catch (Exception e) {
-            System.err.println("UDP Communication Error: " + e.getMessage());
+            System.err.println("Error in sending data: " + e.getMessage());
+        }
+    }
+
+    private void receiveData() {
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                // Recevoir les données UDP
+                Serializable data = udpServer.receiveObject();
+                // Traiter les données reçues
+                System.out.println("Received data: " + data);
+
+                Thread.sleep(200);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupt status
+        } catch (Exception e) {
+            System.err.println("Error in receiving data: " + e.getMessage());
         }
     }
 }
