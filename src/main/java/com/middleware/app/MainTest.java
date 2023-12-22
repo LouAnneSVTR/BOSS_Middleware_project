@@ -15,7 +15,7 @@ public class MainTest {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             // Créer le panel de jeu
-            GamePanel gamePanel = new GamePanel(Player.PLAYER_MAX_HEALTH, Boss.BOSS_MAX_HEALTH);
+            GamePanel gamePanel = new GamePanel(Boss.BOSS_MAX_HEALTH, Player.PLAYER_MAX_HEALTH);
             gamePanel.setPreferredSize(new Dimension(600, 400));
 
             // Ajouter le panel au frame

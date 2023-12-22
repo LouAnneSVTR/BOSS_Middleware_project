@@ -67,25 +67,24 @@ public class GamePanel extends JPanel {
     private void displayLifeBar(Graphics g, int currentLife, int maxLife, int x, int y, Color color, String label) {
         int barWidth = 200;
         int barHeight = 20;
-        int lifeWidth = (int) ((double) currentLife / maxLife * barWidth);
 
+        // Calculate the width of the filled part of the bar based on the life ratio
+        double lifeRatio = (double) currentLife / maxLife;
+        int filledWidth = (int) (lifeRatio * barWidth);
+
+        // Ensure that filledWidth is within the bounds of the bar
+        filledWidth = Math.max(0, Math.min(filledWidth, barWidth));
+
+        // Draw the filled part of the bar
         g.setColor(color);
-        g.fillRect(x, y, lifeWidth, barHeight);
+        g.fillRect(x, y, filledWidth, barHeight);
+
+        // Draw the border of the bar
         g.setColor(Color.BLACK);
         g.drawRect(x, y, barWidth, barHeight);
 
-        // Draw label
-        g.drawString(label + ": " + currentLife + "/" + maxLife, x, y - 5);
-
-        // Resize and position the text to fit within the life bar
-        FontMetrics fm = g.getFontMetrics();
-        String lifeText = currentLife + "/" + maxLife;
-        int textWidth = fm.stringWidth(lifeText);
-        int textHeight = fm.getHeight();
-        int textX = x + (barWidth - textWidth) / 2;
-        int textY = y + ((barHeight - textHeight) / 2) + fm.getAscent();
-
-        g.setColor(Color.WHITE);
-        g.drawString(lifeText, textX, textY);
+        // Draw the label and the life text
+        String lifeText = label + ": " + currentLife + "/" + maxLife;
+        g.drawString(lifeText, x + 5, y + barHeight - 5);
     }
 }
