@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static final int UDP_PORT = 6006;
+    static final int UDP_PORT = 6006;
 
     public static void main(String[] args) {
 

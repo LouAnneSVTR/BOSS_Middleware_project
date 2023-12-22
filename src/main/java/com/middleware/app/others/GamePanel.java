@@ -18,27 +18,54 @@ import static com.middleware.app.game.players.Player.PLAYER_MAX_HEALTH;
 
 public class GamePanel extends JTextPane {
 
+    private int width;
+    private int height;
+
+    private int borderWidth;
+    private int borderBarHeight;
+
+    private Point positionBossLife;
+    private Point positionPlayerLife;
+
     private final Player player;
     private int bossLife;
     private int playerLife;
-    private final Point positionBossLife;
-    private final Point positionPlayerLife;
-    private final int sizeFont;
+
+    private int sizeFont;
 
     private Stack<AbilitiesRankPlayer> abilitiesStack;
 
-    public GamePanel(Player player) {
+    public GamePanel(Player player, int totalWidth, int totalHeight) {
+        this.width = totalWidth;
+        this.height = totalHeight;
+
+        this.setSize(this.width, this.height);
+
         this.player = player;
 
         this.bossLife = BOSS_MAX_HEALTH;
         this.playerLife = PLAYER_MAX_HEALTH;
 
-        this.positionBossLife = new Point(650, 50);
-        this.positionPlayerLife = new Point(650, 150);
+        this.abilitiesStack = new Stack<>();
+
+        updatePoints();
+    }
+
+    private void updatePoints() {
+
+        //System.out.println("w : " + width + " h : " + height);
 
         this.sizeFont = 50;
 
-        this.abilitiesStack = new Stack<>();
+        /*double proportionBossLifeX = 0.85;
+        double proportionBossLifeY = 0.1;
+
+        this.positionBossLife = new Point((int) (width * proportionBossLifeX), (int) (height * proportionBossLifeY));*/
+
+        double proportionPlayerLifeX = 0.85;
+        double proportionPlayerLifeY = 0.1;
+
+        this.positionPlayerLife = new Point((int) (width * proportionPlayerLifeX), (int) (height * proportionPlayerLifeY) + sizeFont);
     }
     public void addText(String text, Color color) throws BadLocationException {
         StyledDocument doc = this.getStyledDocument();
@@ -63,12 +90,30 @@ public class GamePanel extends JTextPane {
         displayBossLife(g);
         displayPlayerLife(g);
         repaint();
+
+        updatePoints();
     }
 
     private void displayBossLife(Graphics g) {
         g.setColor(Color.RED);
         g.setFont(new Font("Arial", Font.PLAIN,this.sizeFont));
-        g.drawString(String.valueOf(this.bossLife), this.positionBossLife.x, this.positionBossLife.y);
+
+        // Obtenir FontMetrics pour la police actuelle
+        FontMetrics metrics = g.getFontMetrics();
+
+        // Calculer la taille du texte
+        String text = String.valueOf(this.bossLife);
+        int textWidth = metrics.stringWidth(text);
+        int textHeight = metrics.getHeight();
+
+        int rightMargin = 10 + this.borderWidth;
+        int upMargin = 10 + this.borderBarHeight;
+
+        this.positionBossLife = new Point(this.width - textWidth - rightMargin, upMargin);
+
+        g.drawString(String.valueOf(this.bossLife),this.positionBossLife.x , this.positionBossLife.y);
+
+
     }
     private void displayPlayerLife(Graphics g) {
         g.setColor(Color.GREEN);
@@ -106,5 +151,14 @@ public class GamePanel extends JTextPane {
                 break;
             }
         }
+    }
+
+    public void setDimension(int newWidth, int newHeight, int newContentWidth, int newContentHeight) {
+        this.width = newWidth;
+        this.height = newHeight;
+        this.borderWidth = (newWidth - newContentWidth) / 2;
+        this.borderBarHeight = newHeight - newContentHeight - this.borderWidth;
+
+        System.out.println("w : " + width + " h : " + height);
     }
 }
