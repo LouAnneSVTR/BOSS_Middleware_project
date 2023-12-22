@@ -33,8 +33,8 @@ public class EntityManager {
         return players.get(currentPlayerId);
     }
 
-    public LightGuardian getCurrentHero(Integer id) {
-        return heroes.get(id);
+    public LightGuardian getCurrentHero() {
+        return heroes.get(currentPlayerId);
     }
 
     public NetworkPlayer getPlayerById(Integer id) {
@@ -47,5 +47,15 @@ public class EntityManager {
 
     public Boss getBoss() {
         return boss;
+    }
+
+    public List<NetworkPlayer> getOtherPlayers() {
+        List<NetworkPlayer> otherPlayers = new ArrayList<>();
+        for (NetworkPlayer player : players.values()) {
+            if (!player.getPlayerId().equals(currentPlayerId)) {
+                otherPlayers.add(player);
+            }
+        }
+        return otherPlayers;
     }
 }

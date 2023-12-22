@@ -24,7 +24,7 @@ public abstract class Boss {
         abilities.put(id, ability);
     }
 
-    public abstract void receiveDamage(int damage);
+    public abstract int receiveDamage(int damage);
 
     public abstract int performAction(AbilitiesRankBoss id); // Implement boss logic for choosing and using abilities
 

@@ -1,7 +1,9 @@
 package com.middleware.app.core;
 
+import com.middleware.app.game.abilities.AbilitiesRankPlayer;
 import com.middleware.app.game.bosses.Boss;
 import com.middleware.app.game.bosses.IceDragon;
+import com.middleware.app.game.players.LightGuardian;
 import com.middleware.app.game.players.Player;
 import com.middleware.app.network.NetworkPlayer;
 import com.middleware.app.network.udp.GamePacket;
@@ -10,9 +12,10 @@ import com.middleware.app.network.udp.ServerUDP;
 import com.middleware.app.ui.GamePanel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.*;
+import java.util.List;
 
 public class Core {
     private volatile boolean isRunning;
@@ -37,14 +40,27 @@ public class Core {
 
         isRunning = true;
 
-        SwingUtilities.invokeLater(this::createAndShowGUI);
+       createAndShowGUI();
         startNetworkCommunication();
 
         while (isRunning) {
-            // Game logic goes here
-            // ...
 
-            Thread.sleep(200);  // Adjust sleep time as needed
+            // TO DO !!!!!
+            // Example le joueur fait des degats au boss:
+            // if(abilityKeyBInd == divineStrike)
+
+            LightGuardian guardian = entityManager.getCurrentHero();
+            int dmg = guardian.activateAbility(AbilitiesRankPlayer.DIVINE_STRIKE_ID);
+            IceDragon boss = (IceDragon) entityManager.getBoss();
+
+            gamePanel.addLogText("You used: Divined Strike that did : " + dmg, Color.BLUE);
+            gamePanel.safeUpdateBossLife(boss.receiveDamage(dmg));
+
+            // Send to others:
+            GamePacket packet = new GamePacket(entityManager.getCurrentPlayer().getPlayerId(), GamePacket.OperationType.PLAYER_DO_DMG, dmg);
+            packetQueue.enqueue(packet);
+
+            Thread.sleep(2000);  // Adjust sleep time as needed
         }
 
         shutdownNetworkCommunication();
@@ -82,17 +98,17 @@ public class Core {
                     GamePacket packet = packetQueue.dequeue();
                     Integer targetId = packet.getPlayerId();
 
-                    // Send packet using UDP
-                    InetAddress targetAddr = InetAddress.getByName(entityManager.getPlayerById(targetId).getIpAddress());
-                    int targetPort = entityManager.getPlayerById(targetId).getUdpPort();
+                    // Broadcast to other players:
+                    for(NetworkPlayer player : entityManager.getOtherPlayers()) {
 
-                    udpServer.sendObject(targetAddr, targetPort, packet);
+                        // Send packet using UDP
+                        InetAddress targetAddr = InetAddress.getByName(player.getIpAddress());
+                        int targetPort = player.getUdpPort();
+
+                        udpServer.sendObject(targetAddr, targetPort, packet);
+                    }
                 }
-
-                Thread.sleep(5);
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore interrupt status
         } catch (Exception e) {
             System.err.println("Error in sending data: " + e.getMessage());
         }
@@ -119,12 +135,15 @@ public class Core {
 
         switch (operation) {
             case BOSS_DO_DMG:
-                Player player = entityManager.getCurrentHero(playerId);
+                Player player = entityManager.getHeroById(playerId);
                 player.receiveDamage(damage);
                 break;
             case PLAYER_DO_DMG:
                 IceDragon boss = (IceDragon) entityManager.getBoss();
                 boss.receiveDamage(damage);
+
+                gamePanel.addLogText(entityManager.getPlayerById(playerId).getPseudo() + " used: Divined Strike that did : " + damage, Color.ORANGE);
+                gamePanel.safeUpdateBossLife(boss.receiveDamage(damage));
                 break;
             default:
                 System.err.println("Unknown operation in received packet");

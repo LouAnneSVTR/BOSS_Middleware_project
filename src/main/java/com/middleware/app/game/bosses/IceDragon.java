@@ -15,11 +15,10 @@ public class IceDragon extends Boss {
         addAbility(AbilitiesRankBoss.ICY_VEIL_ID, new AbilityBoss(AbilitiesRankBoss.ICY_VEIL_ID, "Icy Veil", 0, 6, 0.0, 1.0)); // Defensive ability, immune for the next attack
     }
 
-
     @Override
-    public synchronized void receiveDamage(int damage) {
+    public synchronized int receiveDamage(int damage) {
         this.health -= damage;
-        System.out.println(ConsoleColors.colorPurple(this.name) + ConsoleColors.colorRed(" took ") + ConsoleColors.colorWhiteBright(Integer.toString(damage)) + ConsoleColors.colorBlue(" damage. Health: ") + ConsoleColors.colorWhiteBright(Integer.toString(this.health)));
+        return this.health;
     }
 
     @Override
