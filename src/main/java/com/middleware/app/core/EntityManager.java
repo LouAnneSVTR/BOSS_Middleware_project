@@ -1,10 +1,8 @@
 package com.middleware.app.core;
 
-import com.middleware.app.game.abilities.Abilities;
 import com.middleware.app.game.bosses.Boss;
 import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.LightGuardian;
-import com.middleware.app.game.players.Player;
 import com.middleware.app.network.NetworkPlayer;
 
 import java.util.*;

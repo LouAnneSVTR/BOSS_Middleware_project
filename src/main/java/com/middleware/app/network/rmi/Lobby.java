@@ -5,9 +5,7 @@ import com.middleware.app.network.NetworkPlayer;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Lobby extends UnicastRemoteObject implements LobbyInterface {
     private final List<NetworkPlayer> players;

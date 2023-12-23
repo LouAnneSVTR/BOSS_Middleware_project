@@ -31,10 +31,6 @@ public abstract class Boss {
         return health;
     }
 
-    protected Map<Abilities, Ability> getAbilities() {
-        return abilities;
-    }
-
     public boolean isAlive() {
         return health > 0;
     }
@@ -66,7 +62,7 @@ public abstract class Boss {
         return this.health;
     }
 
-    public void handleAbilityUsage(Abilities abilityId, int effectValue, long timestamp) {
+    public void handleAbilityUsage(Abilities abilityId, long timestamp) {
         Ability ability = abilities.get(abilityId);
         if (ability != null) {
             ability.setLastUsedTimestamp(timestamp);

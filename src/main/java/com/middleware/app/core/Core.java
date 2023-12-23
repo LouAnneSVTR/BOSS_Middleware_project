@@ -1,10 +1,7 @@
 package com.middleware.app.core;
 
 import com.middleware.app.game.abilities.Abilities;
-import com.middleware.app.game.abilities.Ability;
 import com.middleware.app.game.bosses.Boss;
-import com.middleware.app.game.bosses.IceDragon;
-import com.middleware.app.game.players.LightGuardian;
 import com.middleware.app.game.players.Player;
 import com.middleware.app.network.NetworkPlayer;
 import com.middleware.app.network.udp.GamePacket;
@@ -38,7 +35,7 @@ public class Core {
         udpServer = new ServerUDP(entityManager.getCurrentPlayer().getUdpPort(), 1024);
     }
 
-    public synchronized void startGameLoop() throws InterruptedException {
+    public synchronized void startGameLoop() {
         if (isRunning) {
             throw new IllegalStateException("Game loop already running");
         }
@@ -206,7 +203,7 @@ public class Core {
         switch (ability) {
             case DRAGON_FROST_BREATH:
             case DRAGON_BLIZZARD:
-                boss.handleAbilityUsage(ability, value, timestamp);
+                boss.handleAbilityUsage(ability, timestamp);
                 int pLife = hero.receiveDamage(value);
 
                 if(Objects.equals(entityManager.getCurrentPlayer().getPlayerId(), player.getPlayerId())) {

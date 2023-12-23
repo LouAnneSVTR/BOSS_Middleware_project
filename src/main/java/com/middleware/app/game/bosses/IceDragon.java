@@ -5,8 +5,6 @@ import com.middleware.app.game.abilities.*;
 public class IceDragon extends Boss {
     public IceDragon() {
         super("Ice Dragon");
-
-        // Initialize Ice Dragon's abilities
         addAbility(Abilities.DRAGON_FROST_BREATH, new DamageAbility("Frost Breath", 2, 10, 0.10, 1.5));
         addAbility(Abilities.DRAGON_BLIZZARD, new DamageAbility("Blizzard", 10, 10, 0.15, 1.5));
     }
@@ -24,7 +22,6 @@ public class IceDragon extends Boss {
                 ((DefensiveAbility) ability).activateDefense();
                 result = 0;
             }
-            // Note: IceDragon does not have healing abilities in this setup
         }
 
         return result;
