@@ -1,8 +1,10 @@
 package com.middleware.app.core;
 
+import com.middleware.app.game.abilities.Abilities;
 import com.middleware.app.game.bosses.Boss;
 import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.LightGuardian;
+import com.middleware.app.game.players.Player;
 import com.middleware.app.network.NetworkPlayer;
 
 import java.util.*;
@@ -13,6 +15,8 @@ public class EntityManager {
     private final Map<Integer, LightGuardian> heroes;
     private final Map<Integer, NetworkPlayer> players;
     private final IceDragon boss;
+
+    private final Random random = new Random();
 
     public EntityManager(Integer currentPlayerId, List<NetworkPlayer> players) {
 
@@ -58,4 +62,10 @@ public class EntityManager {
         }
         return otherPlayers;
     }
+
+    public NetworkPlayer getRandomPlayer() {
+        Object[] playersArray = players.values().toArray();
+        return (NetworkPlayer) playersArray[random.nextInt(playersArray.length)];
+    }
+
 }

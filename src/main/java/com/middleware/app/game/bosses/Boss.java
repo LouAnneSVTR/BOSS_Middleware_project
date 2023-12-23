@@ -1,19 +1,19 @@
 package com.middleware.app.game.bosses;
 
+import com.middleware.app.game.abilities.Abilities;
 import com.middleware.app.game.abilities.Ability;
-import com.middleware.app.game.abilities.DamageAbility;
+import java.util.Random;
 import com.middleware.app.game.abilities.DefensiveAbility;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public abstract class Boss {
 
     protected final String name;
     public static final int BOSS_MAX_HEALTH = 500;
     protected int health;
-    protected Map<Integer, Ability> abilities;
+    protected Map<Abilities, Ability> abilities;
+    private final Random random = new Random();
 
     public Boss(String name) {
         this.name = name;
@@ -21,17 +21,17 @@ public abstract class Boss {
         this.abilities = new HashMap<>();
     }
 
-    public void addAbility(Integer id, Ability ability) {
+    public void addAbility(Abilities id, Ability ability) {
         abilities.put(id, ability);
     }
 
-    public abstract int performAction(Integer id); // Implement boss logic for choosing and using abilities
+    public abstract int performAction(Abilities id); // Implement boss logic for choosing and using abilities
 
     public int getHealth() {
         return health;
     }
 
-    protected Map<Integer, Ability> getAbilities() {
+    protected Map<Abilities, Ability> getAbilities() {
         return abilities;
     }
 
@@ -43,7 +43,7 @@ public abstract class Boss {
         return name;
     }
 
-    public Ability getAbility(int key) {
+    public Ability getAbility(Abilities key) {
         return this.abilities.get(key);
     }
 
@@ -66,7 +66,7 @@ public abstract class Boss {
         return this.health;
     }
 
-    public void handleAbilityUsage(int abilityId, int effectValue, long timestamp) {
+    public void handleAbilityUsage(Abilities abilityId, int effectValue, long timestamp) {
         Ability ability = abilities.get(abilityId);
         if (ability != null) {
             ability.setLastUsedTimestamp(timestamp);
@@ -77,6 +77,23 @@ public abstract class Boss {
             }
 
         }
+    }
+
+    public Abilities randomAbility() {
+
+        List<Abilities> availableAbilities = new ArrayList<>();
+
+        for (Abilities abilityId : abilities.keySet()) {
+            if (abilities.get(abilityId).isAvailable()) {
+                availableAbilities.add(abilityId);
+            }
+        }
+
+        if (!availableAbilities.isEmpty()) {
+            return availableAbilities.get(random.nextInt(availableAbilities.size()));
+        }
+
+        return null;
     }
 }
 

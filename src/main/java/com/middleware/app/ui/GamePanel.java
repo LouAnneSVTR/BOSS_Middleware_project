@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

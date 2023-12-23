@@ -7,13 +7,13 @@ public class LightGuardian extends Player {
         super("Light Guardian");
 
         // Initialize abilities
-        addAbility(Abilities.GUARDIAN_DIVINE_STRIKE.ordinal(), new DamageAbility("Divine Strike", 25, 0, 0.20, 1.5));
-        addAbility(Abilities.GUARDIAN_HOLY_SHIELD.ordinal(), new DefensiveAbility("Holy Shield", 4, 0.5));
-        addAbility(Abilities.GUARDIAN_BLESSED_HEALING.ordinal(), new HealingAbility("Blessed Healing", 20, 3));
+        addAbility(Abilities.GUARDIAN_DIVINE_STRIKE, new DamageAbility("Divine Strike", 10, 0, 0.20, 1.5));
+        addAbility(Abilities.GUARDIAN_HOLY_SHIELD, new DefensiveAbility("Holy Shield", 4, 6,0.5));
+        addAbility(Abilities.GUARDIAN_BLESSED_HEALING, new HealingAbility("Blessed Healing", 20, 3));
     }
 
     @Override
-    public int activateAbility(Integer id) {
+    public int activateAbility(Abilities id) {
         int result = -1;
         Ability ability = getAbility(id);
 

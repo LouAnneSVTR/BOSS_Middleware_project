@@ -1,6 +1,7 @@
 package com.middleware.app.core;
 
 import com.middleware.app.game.abilities.Abilities;
+import com.middleware.app.game.abilities.Ability;
 import com.middleware.app.game.bosses.Boss;
 import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.LightGuardian;
@@ -25,9 +26,13 @@ public class Core {
     private final transient ServerUDP udpServer;
     private final EntityManager entityManager;
     private GamePanel gamePanel;
+    private long lastBossActionTime = 0;
+    private static final long BOSS_ACTION_COOLDOWN = 5000; // 2 seconds in milliseconds
+    private final boolean isHost;
 
-    public Core(Integer currentPlayerId, List<NetworkPlayer> players) throws SocketException {
+    public Core(Integer currentPlayerId, List<NetworkPlayer> players, boolean isHost) throws SocketException {
 
+        this.isHost = isHost;
         this.entityManager = new EntityManager(currentPlayerId, players);
         udpServer = new ServerUDP(entityManager.getCurrentPlayer().getUdpPort(), 1024);
     }
@@ -46,22 +51,28 @@ public class Core {
 
             Abilities ability = gamePanel.pollAbility();
             while (ability != null) {
-                handleAbility(ability);
+                handlePlayerAbility(ability);
                 ability = gamePanel.pollAbility();
             }
 
+            // Handle boss actions
+            if(isHost)
+                handleBossActions();
         }
 
         shutdownNetworkCommunication();
     }
 
-    private void handleAbility(Abilities ability) {
+    private void handlePlayerAbility(Abilities ability) {
         Player currentHero = entityManager.getCurrentHero();
         NetworkPlayer currentPlayer = entityManager.getCurrentPlayer();
         Boss boss = entityManager.getBoss();
 
         // Activate the ability and get the resulting value (damage, heal amount, etc.)
-        int resultValue = currentHero.activateAbility(ability.ordinal());
+        int resultValue = currentHero.activateAbility(ability);
+
+        if(resultValue == -1)
+            return;
 
         // Create a game packet with the ability action
         GamePacket packet = new GamePacket(currentPlayer.getPlayerId(), ability, resultValue);
@@ -78,6 +89,37 @@ public class Core {
         }
 
         packetQueue.enqueue(packet);
+    }
+
+    private void handleBossActions() {
+
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBossActionTime < BOSS_ACTION_COOLDOWN) {
+            return;
+        }
+
+        NetworkPlayer currentPlayer = entityManager.getRandomPlayer();
+        Player currentHero = entityManager.getHeroById(currentPlayer.getPlayerId());
+
+        Boss boss = entityManager.getBoss();
+        Abilities randomAbility = boss.randomAbility();
+
+        if (randomAbility != null) {
+            int resultValue = boss.performAction(randomAbility);
+
+            if(resultValue == -1)
+                return;
+
+            lastBossActionTime = System.currentTimeMillis();
+
+            // Create and enqueue a packet for the boss's action
+            GamePacket packet = new GamePacket(currentPlayer.getPlayerId(), randomAbility, resultValue);
+
+            gamePanel.safeUpdatePlayerLife(currentHero.receiveDamage(resultValue));
+            // Update game state or UI based on the boss's action
+            gamePanel.addLogText(boss.getName() + " used " +  boss.getAbility(randomAbility).getName() + " ", Color.RED);
+            packetQueue.enqueue(packet);
+        }
     }
 
     private void createAndShowGUI() {
@@ -155,25 +197,25 @@ public class Core {
         switch (ability) {
             case DRAGON_FROST_BREATH:
             case DRAGON_BLIZZARD:
-                boss.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                boss.handleAbilityUsage(ability, value, timestamp);
                 hero.receiveDamage(value);
                 gamePanel.addLogText("Boss attacked " + player.getPseudo() + " for: " + value, Color.RED);
                 break;
             case DRAGON_ICY_VEIL:
-                boss.handleAbilityUsage(ability.ordinal(), value, timestamp);
-                gamePanel.addLogText(boss.getName() + " is in Icy Veil and taking less dmg", Color.BLUE);
+                boss.handleAbilityUsage(ability, value, timestamp);
+                gamePanel.addLogText(boss.getName() + " is in Icy Veil and taking less dmg", Color.RED);
                 break;
             case GUARDIAN_DIVINE_STRIKE:
-                hero.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                hero.handleAbilityUsage(ability, value, timestamp);
                 gamePanel.safeUpdateBossLife(boss.receiveDamage(value));
                 gamePanel.addLogText(player.getPseudo() + " attacked for: " + value, Color.RED);
                 break;
             case GUARDIAN_HOLY_SHIELD:
-                hero.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                hero.handleAbilityUsage(ability, value, timestamp);
                 gamePanel.addLogText(player.getPseudo() + " activated Holy Shield", Color.BLUE);
                 break;
             case GUARDIAN_BLESSED_HEALING:
-                hero.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                hero.handleAbilityUsage(ability, value, timestamp);
                 gamePanel.addLogText(player.getPseudo() + " healed for: " + value, Color.GREEN);
                 break;
             default:

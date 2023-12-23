@@ -64,7 +64,7 @@ public class Main {
             System.out.printf("[%d] Hosting Lobby ! Waiting for the game to start...\n", player.getPlayerId());
             lobby.waitForGameStart();
 
-            return new Core(player.getPlayerId(), lobby.getPlayers());
+            return new Core(player.getPlayerId(), lobby.getPlayers(), true);
 
         } catch (Exception e) {
             System.err.println("Host exception: " + e);
@@ -89,7 +89,7 @@ public class Main {
             System.out.printf("[%d] Lobby Joined ! Waiting for the game to start...\n", player.getPlayerId());
             lobby.waitForGameStart();
 
-            return new Core(player.getPlayerId(), lobby.getPlayers());
+            return new Core(player.getPlayerId(), lobby.getPlayers(), false);
 
         } catch (Exception e) {
             System.err.println("Client exception: " + e);

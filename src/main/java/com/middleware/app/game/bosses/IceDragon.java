@@ -7,19 +7,19 @@ public class IceDragon extends Boss {
         super("Ice Dragon");
 
         // Initialize Ice Dragon's abilities
-        addAbility(Abilities.DRAGON_FROST_BREATH.ordinal(), new DamageAbility("Frost Breath", 30, 2, 0.10, 1.5));
-        addAbility(Abilities.DRAGON_BLIZZARD.ordinal(), new DamageAbility("Blizzard", 45, 5, 0.15, 1.5));
-        addAbility(Abilities.DRAGON_ICY_VEIL.ordinal(), new DefensiveAbility("Icy Veil", 6, 0.5)); // 50% damage reduction
+        addAbility(Abilities.DRAGON_FROST_BREATH, new DamageAbility("Frost Breath", 2, 10, 0.10, 1.5));
+        addAbility(Abilities.DRAGON_BLIZZARD, new DamageAbility("Blizzard", 25, 20, 0.15, 1.5));
+        addAbility(Abilities.DRAGON_ICY_VEIL, new DefensiveAbility("Icy Veil", 5,10,0.5)); // 50% damage reduction
     }
 
     @Override
-    public int performAction(Integer id) {
+    public int performAction(Abilities id) {
         int result = -1;
         Ability ability = getAbility(id);
 
         if (ability != null && ability.isAvailable()) {
             if (ability instanceof DamageAbility) {
-                result = ((DamageAbility) ability).useAbility();
+                result = ability.useAbility();
                 // Apply damage to players
             } else if (ability instanceof DefensiveAbility) {
                 ((DefensiveAbility) ability).activateDefense();

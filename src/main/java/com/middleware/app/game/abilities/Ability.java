@@ -55,4 +55,7 @@ public class Ability {
         this.lastUsedTimestamp = lastUsedTimestamp;
     }
 
+    public long getLastUsedTimestamp() {
+        return lastUsedTimestamp;
+    }
 }

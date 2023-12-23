@@ -1,7 +1,7 @@
 package com.middleware.app.game.players;
 
+import com.middleware.app.game.abilities.Abilities;
 import com.middleware.app.game.abilities.Ability;
-import com.middleware.app.game.abilities.DamageAbility;
 import com.middleware.app.game.abilities.DefensiveAbility;
 import com.middleware.app.game.abilities.HealingAbility;
 
@@ -13,7 +13,7 @@ public abstract class Player {
     public static final int PLAYER_MAX_HEALTH = 100;
     private final String name;
     protected int health;
-    protected Map<Integer, Ability> abilities;
+    protected Map<Abilities, Ability> abilities;
 
     public Player(String name) {
         this.name = name;
@@ -21,7 +21,7 @@ public abstract class Player {
         this.abilities = new HashMap<>();
     }
 
-    public void receiveDamage(int damage) {
+    public int receiveDamage(int damage) {
         double damageMultiplier = 1.0;
 
         // Check for active defensive abilities
@@ -36,9 +36,11 @@ public abstract class Player {
 
         this.health -= finalDamage;
         if (this.health < 0) this.health = 0;
+
+        return this.health;
     }
 
-    public void addAbility(Integer id, Ability ability) {
+    public void addAbility(Abilities id, Ability ability) {
         abilities.put(id, ability);
     }
 
@@ -59,13 +61,13 @@ public abstract class Player {
         return name;
     }
 
-    public abstract int activateAbility(Integer id);
+    public abstract int activateAbility(Abilities id);
 
-    public Ability getAbility(int key) {
+    public Ability getAbility(Abilities key) {
         return this.abilities.get(key);
     }
 
-    public void handleAbilityUsage(int abilityId, int effectValue, long timestamp) {
+    public void handleAbilityUsage(Abilities abilityId, int effectValue, long timestamp) {
         Ability ability = abilities.get(abilityId);
         if (ability != null) {
             ability.setLastUsedTimestamp(timestamp);
