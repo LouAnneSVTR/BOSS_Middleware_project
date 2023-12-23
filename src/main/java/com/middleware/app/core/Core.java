@@ -1,6 +1,6 @@
 package com.middleware.app.core;
 
-import com.middleware.app.game.abilities.AbilitiesRankPlayer;
+import com.middleware.app.game.abilities.Abilities;
 import com.middleware.app.game.bosses.Boss;
 import com.middleware.app.game.bosses.IceDragon;
 import com.middleware.app.game.players.LightGuardian;
@@ -24,11 +24,8 @@ public class Core {
     private Thread sendThread;
     private Thread receiveThread;
     private final transient ServerUDP udpServer;
-
     private final EntityManager entityManager;
     private GamePanel gamePanel;
-
-    private KeybindListener keybindListener;
 
     public Core(Integer currentPlayerId, List<NetworkPlayer> players) throws SocketException {
 
@@ -47,11 +44,7 @@ public class Core {
         startNetworkCommunication();
 
         while (isRunning) {
-            Integer keyCode = keybindListener.pollKey();
-            while (keyCode != null) {
-                handleKey(keyCode);
-                keyCode = keybindListener.pollKey();
-            }
+
         }
 
         shutdownNetworkCommunication();
@@ -59,31 +52,7 @@ public class Core {
 
     private void handleKey(Integer keyCode) {
 
-        LightGuardian guardian = entityManager.getCurrentHero();
-        int damage = 0;
-
-        switch (keyCode) {
-            case KeybindListener.KEY_DIVINE_STRIKE:
-                damage = guardian.activateAbility(AbilitiesRankPlayer.DIVINE_STRIKE_ID);
-                break;
-            case KeybindListener.KEY_HOLY_SHIELD:
-                damage = guardian.activateAbility(AbilitiesRankPlayer.HOLY_SHIELD_ID);
-                break;
-            case KeybindListener.KEY_BLESSED_HEALING:
-                damage = guardian.activateAbility(AbilitiesRankPlayer.BLESSED_HEALING_ID);
-                break;
-            case KeybindListener.KEY_LIGHTS_JUDGMENT:
-                damage = guardian.activateAbility(AbilitiesRankPlayer.LIGHTS_JUDGMENT_ID);
-                break;
-            default:
-        }
-
-        IceDragon boss = (IceDragon) entityManager.getBoss();
-        gamePanel.addLogText("You used: Divined Strike that did : " + damage, Color.BLUE);
-        gamePanel.safeUpdateBossLife(boss.receiveDamage(damage));
-
-        GamePacket packet = new GamePacket(entityManager.getCurrentPlayer().getPlayerId(), GamePacket.OperationType.PLAYER_DO_DMG, damage);
-        packetQueue.enqueue(packet);
+       // TO DO
     }
 
     private void createAndShowGUI() {
@@ -91,10 +60,6 @@ public class Core {
         gamePanel = new GamePanel(Boss.BOSS_MAX_HEALTH, Player.PLAYER_MAX_HEALTH); // Max life values for boss and player
 
         // Create the key listener
-        keybindListener = new KeybindListener();
-        frame.addKeyListener(keybindListener);
-        frame.setFocusable(true);
-
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.getContentPane().add(gamePanel);
 
@@ -154,24 +119,41 @@ public class Core {
     }
 
     private void processReceivedPacket(GamePacket packet) {
-        int playerId = packet.getPlayerId();
-        GamePacket.OperationType operation = packet.getOperation();
-        int damage = packet.getValue();
+        Player hero = entityManager.getHeroById(packet.getPlayerId());
+        NetworkPlayer player = entityManager.getPlayerById(packet.getPlayerId());
+        Boss boss = entityManager.getBoss();
 
-        switch (operation) {
-            case BOSS_DO_DMG:
-                Player player = entityManager.getHeroById(playerId);
-                player.receiveDamage(damage);
+        int value = packet.getValue();
+        long timestamp = packet.getTimestamp();
+        Abilities ability = packet.getAbility();
+
+        switch (ability) {
+            case DRAGON_FROST_BREATH:
+            case DRAGON_BLIZZARD:
+                boss.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                hero.receiveDamage(value);
+                gamePanel.addLogText("Boss attacked " + player.getPseudo() + " for: " + value, Color.RED);
                 break;
-            case PLAYER_DO_DMG:
-                IceDragon boss = (IceDragon) entityManager.getBoss();
-                boss.receiveDamage(damage);
-
-                gamePanel.addLogText(entityManager.getPlayerById(playerId).getPseudo() + "attacked for: " + damage, Color.ORANGE);
-                gamePanel.safeUpdateBossLife(boss.receiveDamage(damage));
+            case DRAGON_ICY_VEIL:
+                boss.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                gamePanel.addLogText(boss.getName() + " is in Icy Veil and taking less dmg", Color.BLUE);
+                break;
+            case GUARDIAN_DIVINE_STRIKE:
+                hero.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                boss.receiveDamage(value);
+                gamePanel.addLogText(player.getPseudo() + " attacked for: " + value, Color.RED);
+                gamePanel.safeUpdateBossLife(boss.receiveDamage(value));
+                break;
+            case GUARDIAN_HOLY_SHIELD:
+                hero.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                gamePanel.addLogText(player.getPseudo() + " activated Holy Shield", Color.BLUE);
+                break;
+            case GUARDIAN_BLESSED_HEALING:
+                hero.handleAbilityUsage(ability.ordinal(), value, timestamp);
+                gamePanel.addLogText(player.getPseudo() + " healed for: " + value, Color.GREEN);
                 break;
             default:
-                System.err.println("Unknown operation in received packet");
+                System.err.println("Unknown ability in received packet");
         }
     }
 }

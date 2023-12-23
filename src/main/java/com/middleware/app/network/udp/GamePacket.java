@@ -1,26 +1,31 @@
 package com.middleware.app.network.udp;
 
+import com.middleware.app.game.abilities.Abilities;
+
 import java.io.Serializable;
 
-public class GamePacket implements Serializable {
+public class GamePacket implements Serializable, Comparable<GamePacket> {
     private final int playerId;
-    private final OperationType operation;
+    private final Abilities ability;
     private final int value;
+    private final long timestamp;  // Added timestamp
 
-    public enum OperationType {
-        BOSS_DO_DMG, PLAYER_DO_DMG, ABILITY
-    }
-
-    public GamePacket(int playerId, OperationType operation, int value) {
+    public GamePacket(int playerId, Abilities ability, int value) {
         this.playerId = playerId;
-        this.operation = operation;
+        this.ability = ability;
         this.value = value;
+        this.timestamp = System.currentTimeMillis(); // Assign the current time as the timestamp
     }
 
     // Getters
     public int getPlayerId() { return playerId; }
-    public OperationType getOperation() { return operation; }
+    public Abilities getAbility() { return ability; }
     public int getValue() { return value; }
+    public long getTimestamp() { return timestamp; }
+
+    // Compare GamePackets based on timestamp
+    @Override
+    public int compareTo(GamePacket other) {
+        return Long.compare(this.timestamp, other.timestamp);
+    }
 }
-
-

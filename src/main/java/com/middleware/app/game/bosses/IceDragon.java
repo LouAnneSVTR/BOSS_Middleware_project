@@ -1,45 +1,33 @@
 package com.middleware.app.game.bosses;
 
-import com.middleware.app.game.abilities.AbilitiesRankBoss;
-import com.middleware.app.game.abilities.Ability;
-import com.middleware.app.game.abilities.AbilityBoss;
-import com.middleware.app.ui.ConsoleColors;
+import com.middleware.app.game.abilities.*;
 
 public class IceDragon extends Boss {
-
     public IceDragon() {
         super("Ice Dragon");
+
         // Initialize Ice Dragon's abilities
-        addAbility(AbilitiesRankBoss.FROST_BREATH_ID, new AbilityBoss(AbilitiesRankBoss.FROST_BREATH_ID, "Frost Breath", 30, 3, 0.10, 1.5)); // Damage ability with a small crit chance
-        addAbility(AbilitiesRankBoss.BLIZZARD_ID, new AbilityBoss(AbilitiesRankBoss.BLIZZARD_ID, "Blizzard", 45, 5, 0.15, 1.5)); // Strong damage ability with crit chance
-        addAbility(AbilitiesRankBoss.ICY_VEIL_ID, new AbilityBoss(AbilitiesRankBoss.ICY_VEIL_ID, "Icy Veil", 0, 6, 0.0, 1.0)); // Defensive ability, immune for the next attack
+        addAbility(Abilities.DRAGON_FROST_BREATH.ordinal(), new DamageAbility("Frost Breath", 30, 2, 0.10, 1.5));
+        addAbility(Abilities.DRAGON_BLIZZARD.ordinal(), new DamageAbility("Blizzard", 45, 5, 0.15, 1.5));
+        addAbility(Abilities.DRAGON_ICY_VEIL.ordinal(), new DefensiveAbility("Icy Veil", 6, 0.5)); // 50% damage reduction
     }
 
     @Override
-    public synchronized int receiveDamage(int damage) {
-        this.health -= damage;
-        return this.health;
-    }
+    public int performAction(Integer id) {
+        int result = -1;
+        Ability ability = getAbility(id);
 
-    @Override
-    public int performAction(AbilitiesRankBoss id) {
-        int resultAbility = -1;
-
-        if (id != AbilitiesRankBoss.NO_ATTACK_BOSS) {
-            Ability selectedAbility = this.abilities.get(id);
-
-            if (selectedAbility == null) {
-                throw new IllegalArgumentException("Ability with ID " + id + " does not exist");
+        if (ability != null && ability.isAvailable()) {
+            if (ability instanceof DamageAbility) {
+                result = ((DamageAbility) ability).useAbility();
+                // Apply damage to players
+            } else if (ability instanceof DefensiveAbility) {
+                ((DefensiveAbility) ability).activateDefense();
+                result = 0;
             }
-
-            if (selectedAbility.isAvailable()) {
-                resultAbility = selectedAbility.useAbility();
-            }
-
-
+            // Note: IceDragon does not have healing abilities in this setup
         }
 
-        return resultAbility;
+        return result;
     }
 }
-

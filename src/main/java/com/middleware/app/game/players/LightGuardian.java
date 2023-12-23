@@ -1,42 +1,35 @@
 package com.middleware.app.game.players;
 
-import com.middleware.app.game.abilities.AbilitiesRankPlayer;
-import com.middleware.app.game.abilities.Ability;
-import com.middleware.app.game.abilities.AbilityPlayer;
+import com.middleware.app.game.abilities.*;
 
 public class LightGuardian extends Player {
-
     public LightGuardian() {
         super("Light Guardian");
-        // Initialize with standard Paladin abilities, assigning an ID to each one
-        // For demonstration purposes, the critChance is 20% for damage abilities
-        addAbility(AbilitiesRankPlayer.DIVINE_STRIKE_ID, new AbilityPlayer(AbilitiesRankPlayer.DIVINE_STRIKE_ID, "Divine Strike", 25, 2, 0.20, 1.5)); // Damage ability with crit
-        addAbility(AbilitiesRankPlayer.HOLY_SHIELD_ID, new AbilityPlayer(AbilitiesRankPlayer.HOLY_SHIELD_ID, "Holy Shield", 0, 4, 0.0, 1.0)); // Defensive ability, no crit
-        addAbility(AbilitiesRankPlayer.BLESSED_HEALING_ID, new AbilityPlayer(AbilitiesRankPlayer.BLESSED_HEALING_ID, "Blessed Healing", 20, 3, 0.0, 1.0)); // Healing ability, no crit
-        addAbility(AbilitiesRankPlayer.LIGHTS_JUDGMENT_ID, new AbilityPlayer(AbilitiesRankPlayer.LIGHTS_JUDGMENT_ID, "Light's Judgment", 40, 5, 0.20, 2.0)); // Strong damage ability with crit
-    }
 
-    public void receiveDamage(int damage) {
-        this.health -= damage;
-        if (health < 0) health = 0;
+        // Initialize abilities
+        addAbility(Abilities.GUARDIAN_DIVINE_STRIKE.ordinal(), new DamageAbility("Divine Strike", 25, 0, 0.20, 1.5));
+        addAbility(Abilities.GUARDIAN_HOLY_SHIELD.ordinal(), new DefensiveAbility("Holy Shield", 4, 0.5));
+        addAbility(Abilities.GUARDIAN_BLESSED_HEALING.ordinal(), new HealingAbility("Blessed Healing", 20, 3));
     }
 
     @Override
-    public int activateAbility(AbilitiesRankPlayer id) {
-        int resultAbility = -1;
-        if (id != AbilitiesRankPlayer.NO_ATTACK_PLAYER) {
-            Ability selectedAbility = abilities.get(id);
+    public int activateAbility(Integer id) {
+        int result = -1;
+        Ability ability = getAbility(id);
 
-            if (selectedAbility == null) {
-                throw new IllegalArgumentException("Ability with ID " + id + " does not exist");
-            }
-
-            if (selectedAbility.isAvailable()) {
-                resultAbility = selectedAbility.useAbility();
+        if (ability != null && ability.isAvailable()) {
+            if (ability instanceof DamageAbility) {
+                result = ability.useAbility();
+            } else if (ability instanceof HealingAbility) {
+                int healAmount = ((HealingAbility) ability).heal();
+                restoreHealth(healAmount);
+                result = healAmount;
+            } else if (ability instanceof DefensiveAbility) {
+                ((DefensiveAbility) ability).activateDefense();
+                result = 0; // No damage/healing value
             }
         }
 
-        return resultAbility;
+        return result;
     }
 }
-

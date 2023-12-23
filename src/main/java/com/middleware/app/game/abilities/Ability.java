@@ -2,7 +2,7 @@ package com.middleware.app.game.abilities;
 
 import java.util.Random;
 
-public abstract class Ability {
+public class Ability {
     private final String name;
     private final int power;
     private final int cooldown; // Cooldown in seconds
@@ -32,13 +32,13 @@ public abstract class Ability {
         return cooldown;
     }
 
+    public int calculateDamage() {
+        return isCriticalHit() ? (int)(power * critMultiplier) : power;
+    }
+
     public int useAbility() {
         lastUsedTimestamp = System.currentTimeMillis();
-
-        if (isCriticalHit()) {
-            return (int)(power * critMultiplier);
-        }
-        return power;
+        return calculateDamage();
     }
 
     private boolean isCriticalHit() {
@@ -50,4 +50,9 @@ public abstract class Ability {
         long cooldownInMillis = cooldown * 1000L;
         return (currentTime - lastUsedTimestamp) >= cooldownInMillis;
     }
+
+    public void setLastUsedTimestamp(long lastUsedTimestamp) {
+        this.lastUsedTimestamp = lastUsedTimestamp;
+    }
+
 }
