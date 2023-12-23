@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Lobby extends UnicastRemoteObject implements LobbyInterface {
     private final List<NetworkPlayer> players;
-    private static final int MAX_PLAYERS = 2;
+    private static final int MAX_PLAYERS = 3;
     private final Object startGameMonitor = new Object();
 
     public Lobby() throws RemoteException {

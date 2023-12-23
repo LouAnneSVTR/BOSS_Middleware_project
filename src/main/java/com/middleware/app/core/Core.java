@@ -74,13 +74,13 @@ public class Core {
 
         // Create a game packet with the ability action
         GamePacket packet = new GamePacket(currentPlayer.getPlayerId(), ability, resultValue);
-
         // Add additional logic based on ability type
         switch (ability) {
             case GUARDIAN_DIVINE_STRIKE:
                 int life = boss.receiveDamage(resultValue);
                 gamePanel.safeUpdateBossLife(life);
             case GUARDIAN_BLESSED_HEALING:
+                gamePanel.safeUpdatePlayerLife(currentHero.getHealth());
             case GUARDIAN_HOLY_SHIELD:
                 gamePanel.addLogText("You used " + ability.name() + " with effect: " + resultValue, Color.CYAN);
                 break;
@@ -205,11 +205,9 @@ public class Core {
             case DRAGON_BLIZZARD:
                 boss.handleAbilityUsage(ability, timestamp);
                 int pLife = hero.receiveDamage(value);
-
                 if(Objects.equals(entityManager.getCurrentPlayer().getPlayerId(), player.getPlayerId())) {
                     gamePanel.safeUpdatePlayerLife(pLife);
                 }
-
                 gamePanel.addLogText(boss.getName() + " used " +  boss.getAbility(ability).getName() + " on " + player.getPseudo(), Color.RED);
                 break;
             case GUARDIAN_DIVINE_STRIKE:
