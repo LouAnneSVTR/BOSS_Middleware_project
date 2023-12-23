@@ -12,17 +12,20 @@ public class Lobby extends UnicastRemoteObject implements LobbyInterface {
     private static final int MAX_PLAYERS = 3;
     private final Object startGameMonitor = new Object();
 
-    public Lobby(NetworkPlayer hostPlayer) throws RemoteException {
+    public Lobby() throws RemoteException {
         players = new ArrayList<>();
-        players.add(hostPlayer);
     }
 
     @Override
-    public synchronized boolean joinLobby(NetworkPlayer newPlayer) throws RemoteException {
+    public synchronized int joinLobby(NetworkPlayer newPlayer) throws RemoteException {
+
         if (players.size() >= MAX_PLAYERS) {
-            return false;
+            return -1;
         }
 
+        // To reflect changes on both sides as it will be done after by the calling player
+        int newId = players.size() + 1;
+        newPlayer.setPlayerId(newId);
         players.add(newPlayer);
 
         if (players.size() == MAX_PLAYERS) {
@@ -31,7 +34,7 @@ public class Lobby extends UnicastRemoteObject implements LobbyInterface {
             }
         }
 
-        return true;
+        return newId;
     }
 
     @Override
