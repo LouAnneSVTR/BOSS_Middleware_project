@@ -8,8 +8,7 @@ public class IceDragon extends Boss {
 
         // Initialize Ice Dragon's abilities
         addAbility(Abilities.DRAGON_FROST_BREATH, new DamageAbility("Frost Breath", 2, 10, 0.10, 1.5));
-        addAbility(Abilities.DRAGON_BLIZZARD, new DamageAbility("Blizzard", 25, 20, 0.15, 1.5));
-        addAbility(Abilities.DRAGON_ICY_VEIL, new DefensiveAbility("Icy Veil", 5,10,0.5)); // 50% damage reduction
+        addAbility(Abilities.DRAGON_BLIZZARD, new DamageAbility("Blizzard", 10, 10, 0.15, 1.5));
     }
 
     @Override

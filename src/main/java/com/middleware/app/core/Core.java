@@ -17,6 +17,7 @@ import java.awt.*;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.List;
+import java.util.Objects;
 
 public class Core {
     private volatile boolean isRunning;
@@ -27,7 +28,7 @@ public class Core {
     private final EntityManager entityManager;
     private GamePanel gamePanel;
     private long lastBossActionTime = 0;
-    private static final long BOSS_ACTION_COOLDOWN = 5000; // 2 seconds in milliseconds
+    private static final long BOSS_ACTION_COOLDOWN = 5000; // 5s
     private final boolean isHost;
 
     public Core(Integer currentPlayerId, List<NetworkPlayer> players, boolean isHost) throws SocketException {
@@ -98,8 +99,8 @@ public class Core {
             return;
         }
 
-        NetworkPlayer currentPlayer = entityManager.getRandomPlayer();
-        Player currentHero = entityManager.getHeroById(currentPlayer.getPlayerId());
+        NetworkPlayer player = entityManager.getRandomPlayer();
+        Player currentHero = entityManager.getHeroById(player.getPlayerId());
 
         Boss boss = entityManager.getBoss();
         Abilities randomAbility = boss.randomAbility();
@@ -113,11 +114,19 @@ public class Core {
             lastBossActionTime = System.currentTimeMillis();
 
             // Create and enqueue a packet for the boss's action
-            GamePacket packet = new GamePacket(currentPlayer.getPlayerId(), randomAbility, resultValue);
+            GamePacket packet = new GamePacket(player.getPlayerId(), randomAbility, resultValue);
 
-            gamePanel.safeUpdatePlayerLife(currentHero.receiveDamage(resultValue));
+            int pLife = currentHero.receiveDamage(resultValue);
+            if(Objects.equals(entityManager.getCurrentPlayer().getPlayerId(), player.getPlayerId())) {
+                gamePanel.safeUpdatePlayerLife(pLife);
+            }
             // Update game state or UI based on the boss's action
-            gamePanel.addLogText(boss.getName() + " used " +  boss.getAbility(randomAbility).getName() + " ", Color.RED);
+            if(randomAbility != Abilities.DRAGON_ICY_VEIL) {
+                gamePanel.addLogText(boss.getName() + " used " +  boss.getAbility(randomAbility).getName() + " on " + player.getPseudo(), Color.RED);
+            } else {
+                gamePanel.addLogText(boss.getName() + " used " +  boss.getAbility(randomAbility).getName(), Color.RED);
+            }
+
             packetQueue.enqueue(packet);
         }
     }
@@ -198,12 +207,13 @@ public class Core {
             case DRAGON_FROST_BREATH:
             case DRAGON_BLIZZARD:
                 boss.handleAbilityUsage(ability, value, timestamp);
-                hero.receiveDamage(value);
-                gamePanel.addLogText("Boss attacked " + player.getPseudo() + " for: " + value, Color.RED);
-                break;
-            case DRAGON_ICY_VEIL:
-                boss.handleAbilityUsage(ability, value, timestamp);
-                gamePanel.addLogText(boss.getName() + " is in Icy Veil and taking less dmg", Color.RED);
+                int pLife = hero.receiveDamage(value);
+
+                if(Objects.equals(entityManager.getCurrentPlayer().getPlayerId(), player.getPlayerId())) {
+                    gamePanel.safeUpdatePlayerLife(pLife);
+                }
+
+                gamePanel.addLogText(boss.getName() + " used " +  boss.getAbility(ability).getName() + " on " + player.getPseudo(), Color.RED);
                 break;
             case GUARDIAN_DIVINE_STRIKE:
                 hero.handleAbilityUsage(ability, value, timestamp);

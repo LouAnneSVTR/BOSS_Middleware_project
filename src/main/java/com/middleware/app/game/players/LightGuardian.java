@@ -9,7 +9,7 @@ public class LightGuardian extends Player {
         // Initialize abilities
         addAbility(Abilities.GUARDIAN_DIVINE_STRIKE, new DamageAbility("Divine Strike", 10, 0, 0.20, 1.5));
         addAbility(Abilities.GUARDIAN_HOLY_SHIELD, new DefensiveAbility("Holy Shield", 4, 6,0.5));
-        addAbility(Abilities.GUARDIAN_BLESSED_HEALING, new HealingAbility("Blessed Healing", 20, 3));
+        addAbility(Abilities.GUARDIAN_BLESSED_HEALING, new HealingAbility("Blessed Healing", 20, 10));
     }
 
     @Override
