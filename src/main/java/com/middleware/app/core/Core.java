@@ -10,7 +10,6 @@ import com.middleware.app.network.udp.GamePacket;
 import com.middleware.app.network.udp.GamePacketQueue;
 import com.middleware.app.network.udp.ServerUDP;
 import com.middleware.app.ui.GamePanel;
-import com.middleware.app.ui.KeybindListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,14 +44,40 @@ public class Core {
 
         while (isRunning) {
 
+            Abilities ability = gamePanel.pollAbility();
+            while (ability != null) {
+                handleAbility(ability);
+                ability = gamePanel.pollAbility();
+            }
+
         }
 
         shutdownNetworkCommunication();
     }
 
-    private void handleKey(Integer keyCode) {
+    private void handleAbility(Abilities ability) {
+        Player currentHero = entityManager.getCurrentHero();
+        NetworkPlayer currentPlayer = entityManager.getCurrentPlayer();
+        Boss boss = entityManager.getBoss();
 
-       // TO DO
+        // Activate the ability and get the resulting value (damage, heal amount, etc.)
+        int resultValue = currentHero.activateAbility(ability.ordinal());
+
+        // Create a game packet with the ability action
+        GamePacket packet = new GamePacket(currentPlayer.getPlayerId(), ability, resultValue);
+
+        // Add additional logic based on ability type
+        switch (ability) {
+            case GUARDIAN_DIVINE_STRIKE:
+                int life = boss.receiveDamage(resultValue);
+                gamePanel.safeUpdateBossLife(life);
+            case GUARDIAN_BLESSED_HEALING:
+            case GUARDIAN_HOLY_SHIELD:
+                gamePanel.addLogText("You used " + ability.name() + " with effect: " + resultValue, Color.CYAN);
+                break;
+        }
+
+        packetQueue.enqueue(packet);
     }
 
     private void createAndShowGUI() {
@@ -140,9 +165,8 @@ public class Core {
                 break;
             case GUARDIAN_DIVINE_STRIKE:
                 hero.handleAbilityUsage(ability.ordinal(), value, timestamp);
-                boss.receiveDamage(value);
-                gamePanel.addLogText(player.getPseudo() + " attacked for: " + value, Color.RED);
                 gamePanel.safeUpdateBossLife(boss.receiveDamage(value));
+                gamePanel.addLogText(player.getPseudo() + " attacked for: " + value, Color.RED);
                 break;
             case GUARDIAN_HOLY_SHIELD:
                 hero.handleAbilityUsage(ability.ordinal(), value, timestamp);

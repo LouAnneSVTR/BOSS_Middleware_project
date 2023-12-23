@@ -52,7 +52,7 @@ public class EntityManager {
     public List<NetworkPlayer> getOtherPlayers() {
         List<NetworkPlayer> otherPlayers = new ArrayList<>();
         for (NetworkPlayer player : players.values()) {
-            if (!player.getPlayerId().equals(currentPlayerId)) {
+            if (!Objects.equals(player.getPlayerId(), currentPlayerId)) {
                 otherPlayers.add(player);
             }
         }

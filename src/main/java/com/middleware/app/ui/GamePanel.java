@@ -1,22 +1,27 @@
 package com.middleware.app.ui;
 
+import com.middleware.app.game.abilities.Abilities;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+
 public class GamePanel extends JPanel {
     private final JTextPane logTextPane;
-    private final int maxBossLife;
-    private final int maxPlayerLife;
     private int bossLife;
     private int playerLife;
-
-    // Object for intrinsic lock
     private final Object lifeLock = new Object();
+    private final BlockingQueue<Abilities> abilityQueue; // Queue for abilities
 
     public GamePanel(int maxBossLife, int maxPlayerLife) {
-        this.maxBossLife = maxBossLife;
-        this.maxPlayerLife = maxPlayerLife;
+
+        this.abilityQueue = new LinkedBlockingQueue<>();
+
         synchronized (lifeLock) {
             this.bossLife = maxBossLife;
             this.playerLife = maxPlayerLife;
@@ -31,7 +36,21 @@ public class GamePanel extends JPanel {
         scrollPane.setPreferredSize(new Dimension(600, 300));
         add(scrollPane, BorderLayout.CENTER);
 
-        // Life bars will be drawn in a separate panel at the bottom
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel lifeBarPanel = getLifeBarPanel(maxBossLife, maxPlayerLife);
+        bottomPanel.add(lifeBarPanel, BorderLayout.NORTH);
+
+        JPanel abilityPanel = new JPanel(new FlowLayout());
+        addAbilityButton(abilityPanel, "Divine Strike", Abilities.GUARDIAN_DIVINE_STRIKE);
+        addAbilityButton(abilityPanel, "Blessed Healing", Abilities.GUARDIAN_BLESSED_HEALING);
+        addAbilityButton(abilityPanel, "Holy Shield", Abilities.GUARDIAN_HOLY_SHIELD);
+
+        bottomPanel.add(abilityPanel, BorderLayout.SOUTH);
+        add(bottomPanel, BorderLayout.PAGE_END);
+    }
+
+    private JPanel getLifeBarPanel(int maxBossLife, int maxPlayerLife) {
         JPanel lifeBarPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -50,7 +69,7 @@ public class GamePanel extends JPanel {
             }
         };
         lifeBarPanel.setPreferredSize(new Dimension(600, 60));
-        add(lifeBarPanel, BorderLayout.SOUTH);
+        return lifeBarPanel;
     }
 
     // Method to add text to the log
@@ -113,5 +132,22 @@ public class GamePanel extends JPanel {
             playerLife = newPlayerLife;
         }
         repaint();
+    }
+
+    private void addAbilityButton(JPanel panel, String buttonText, Abilities abilityType) {
+        JButton button = new JButton(buttonText);
+        button.addActionListener(e -> {
+            try {
+                abilityQueue.put(abilityType); // Enqueue the ability
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        });
+        panel.add(button);
+    }
+
+    // Method to poll an ability from the queue (to be called from another thread)
+    public Abilities pollAbility() {
+        return abilityQueue.poll();
     }
 }

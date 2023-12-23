@@ -70,9 +70,7 @@ public abstract class Player {
         if (ability != null) {
             ability.setLastUsedTimestamp(timestamp);
 
-            if (ability instanceof DamageAbility) {
-                receiveDamage(effectValue);
-            } else if (ability instanceof HealingAbility) {
+            if (ability instanceof HealingAbility) {
                 restoreHealth(effectValue);
             } else if (ability instanceof DefensiveAbility) {
                 ((DefensiveAbility) ability).activateDefense();

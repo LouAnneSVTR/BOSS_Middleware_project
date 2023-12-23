@@ -1,6 +1,5 @@
 package com.middleware.app.game.bosses;
 
-import com.middleware.app.game.abilities.AbilitiesIceDragon;
 import com.middleware.app.game.abilities.Ability;
 import com.middleware.app.game.abilities.DamageAbility;
 import com.middleware.app.game.abilities.DefensiveAbility;
@@ -72,9 +71,7 @@ public abstract class Boss {
         if (ability != null) {
             ability.setLastUsedTimestamp(timestamp);
 
-            if (ability instanceof DamageAbility) {
-                receiveDamage(effectValue);
-            } else if (ability instanceof DefensiveAbility) {
+            if (ability instanceof DefensiveAbility) {
                 // Activate defensive mode or apply a defensive buff
                 ((DefensiveAbility) ability).activateDefense();
             }
