@@ -1,8 +1,8 @@
 package com.middleware.app.network;
 
 import com.middleware.app.network.utils.NetworkUtils;
+
 import java.io.Serializable;
-import java.net.SocketException;
 
 
 public class NetworkPlayer implements Serializable {
