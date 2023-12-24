@@ -183,7 +183,6 @@ public class Core {
 
                 // Receive packet
                 GamePacket packet = (GamePacket) udpServer.receiveObject();
-                // Process packet or enqueue it for processing
                 processReceivedPacket(packet);
             }
         } catch (Exception e) {

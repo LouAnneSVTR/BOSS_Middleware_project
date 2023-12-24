@@ -21,7 +21,6 @@ public class NetworkPlayer implements Serializable {
         this.ipAddress = NetworkUtils.getLocalHostAddress();
     }
 
-    // Getters and Setters
     public String getPseudo() { return pseudo; }
     public String getIpAddress() { return ipAddress; }
     public int getUdpPort() { return udpPort; }

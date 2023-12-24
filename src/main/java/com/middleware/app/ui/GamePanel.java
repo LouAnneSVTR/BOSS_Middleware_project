@@ -85,12 +85,10 @@ public class GamePanel extends JPanel {
         });
     }
 
-    // Thread-safe method to update boss life
     public void safeUpdateBossLife(int newBossLife) {
         SwingUtilities.invokeLater(() -> updateBossLife(newBossLife));
     }
 
-    // Thread-safe method to update player life
     public void safeUpdatePlayerLife(int newPlayerLife) {
         SwingUtilities.invokeLater(() -> updatePlayerLife(newPlayerLife));
     }
@@ -103,18 +101,14 @@ public class GamePanel extends JPanel {
         double lifeRatio = (double) currentLife / maxLife;
         int filledWidth = (int) (lifeRatio * barWidth);
 
-        // Ensure that filledWidth is within the bounds of the bar
         filledWidth = Math.max(0, Math.min(filledWidth, barWidth));
 
-        // Draw the filled part of the bar
         g.setColor(color);
         g.fillRect(x, y, filledWidth, barHeight);
 
-        // Draw the border of the bar
         g.setColor(Color.BLACK);
         g.drawRect(x, y, barWidth, barHeight);
 
-        // Draw the label and the life text
         String lifeText = label + ": " + currentLife + "/" + maxLife;
         g.drawString(lifeText, x + 5, y + barHeight - 5);
     }
