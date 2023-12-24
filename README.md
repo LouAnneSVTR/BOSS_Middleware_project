@@ -2,12 +2,12 @@
 
 
 ## Description du Projet
-Combat de boss joueur contre 
+Mise en place d'un jeu de combat joueurs contre 1 boss, le joueurs infligeant des dégats au boss et inverssement, à travers des Abilitées pariculières.
 
 ### Objectif
 
-Ce projet Java a pour objectif de mettre en place une infrastructure réseau permettant le développement d'un jeu multi-joueur. Le jeu présente un combat simple de boss contre plusieursjoueurs, chaque joueur représentant 1 thread pour une synchornisation et une distibutivité algorithmique. 
-L'accent est mis sur la gestion des threads, la communication réseau via UDP, la synchronisation, et l'utilisation de RMI (Remote Method Invocation).
+Ce projet Java a pour objectif de mettre en place une infrastructure réseau permettant le développement d'un jeu multi-joueur. Le jeu présente un combat simple de boss contre plusieurs joueurs, chaque joueur représentant 1 thread pour une synchornisation et une distibutivité algorithmique. 
+Le but pricipal du projet est concentré sur la gestion des threads, la communication réseau via UDP, la synchronisation, et l'utilisation de RMI (Remote Method Invocation).
 
 ### Outils Utilisés
 
@@ -21,19 +21,14 @@ Le projet se divise principalement en trois parties clés :
 Un thread principal (mainThread) de l'application.
 Threads distincts pour l'envoi et la réception des données via UDP.
 Utilisation de moniteurs, RMI, et queues pour assurer la synchronisation entre les différentes parties.
-
-Implémentation RMI avec Lobby :
-
-La classe Lobby utilise RMI pour gérer le lobby du jeu.
+Ensuite, la classe Lobby utilise RMI pour gérer le lobby du jeu.
 Synchronisation avec des moniteurs pour garantir une entrée/sortie sécurisée des joueurs dans le lobby.
-Communication via UDP :
-
-La classe ServerUDP gère l'envoi et la réception de données via le protocole UDP.
+Enfin, la classe ServerUDP gère l'envoi et la réception de données via le protocole UDP.
 Utilisation de CRC32 pour vérifier l'intégrité des données.
 
 ### Classes importantes du projet :
 
-1. Gestion du Lobby avec RMI :
+1. Gestion du **Lobby avec RMI :
 La classe **Lobby** utilise RMI pour gérer le lobby du jeu.
 Elle synchronise l'entrée/sortie des joueurs dans le lobby et notifie les threads en attente lorsque le lobby est plein.
 
@@ -48,12 +43,20 @@ Elle utilise des threads pour communiquer avec d'autres joueurs via UDP.
 4. La classe **NetworkPlayer**
 Encapsule les fonctionnalités réseau, telles que l'hébergement et la connexion à une partie, l'envoi et la réception d'objets via UDP.
 
+## Problèmes Rencontrés
+Certaines fonctionnalités n'ont pas été entièrement implémentées en raison de contraintes de temps liées à d'autres projets. 
+
+Ces points comprennent :
+
+- La synchronisation améliorée via l'utilisation du timestamp pour les paquets UDP.
+- L'implémentation du temps causale.
+- Des problèmes de sérialisation ont été rencontrés et partiellement résolus.
 
 ## Apperçu du projet
 
 ![Cover](https://github.com/LouAnneSVTR/BOSS_Middleware_project/blob/main/image.png)
 
-
+Joueurs connectés en local contre 1 boss avec leur barre de vie respecives.
 
 ## Comment Utiliser le Projet
 
