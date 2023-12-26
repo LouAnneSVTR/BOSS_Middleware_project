@@ -35,19 +35,35 @@ L'objectif principal est de développer une infrastructure réseau supportant un
 git clone https://github.com/LouAnneSVTR/BOSS_Middleware_project.git
 ```
 
-### Lancement
-
-Il faudrait idéalement 3 joueurs ou 2 en changeant la variable `MAX_PLAYERS` dans la classe `Lobby.java`. Pour cela en local il est possible de faire une copie du proje et de changer le port UDP de la classe main, d'un des deux projets. Il suffira d'utiliser l'adresse IP locale: `127.0.0.1` pour se connecter aux autres joueurs.
+Pour éxécuter le projet avec maven:
 
 ```
 cd BOSS_Middleware_project/
 mvn exec:java
 ```
 
-Ou via Intellij, exécuter la classe `Main.java`.
+Ou via Intellij simplement, exécuter la classe `Main.java` situé: `src.main.java.com.middleware.app.Main`.
+
+### Demo
+
+Il faudrait idéalement 3 joueurs ou 2 en changeant la variable `MAX_PLAYERS` dans la classe `Lobby.java`. Pour cela en local il est possible de faire une copie du proje et de changer le port UDP de la classe main, d'un des deux projets. Il suffira d'utiliser l'adresse IP locale: `127.0.0.1` pour se connecter aux autres joueurs.
+
+Changer le port UDP si besoin. Dans `src.main.java.com.middleware.app.Main`
+```java
+public static final int UDP_PORT = 6006;
+public static final int LOBBY_PORT = 5006;
+```
+
+[Demo Middleware Video](https://streamable.com/ub0yd1 "Demo Middleware Video")
+
+<iframe width="560" height="315"
+src="https://streamable.com/ub0yd1" 
+frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+allowfullscreen></iframe>
 
 ## Auteurs
-- [@HugoCHB](https://github.com/faceslog)
-- [@LouAnneSVTR](https://github.com/LouAnneSVTR)
-- [@SofianeCDL](https://github.com/SofianeCDL)
-- [@ValentinGBN](https://github.com/TinkyValou)
+- [@HugoCH](https://github.com/faceslog) (faceslog)
+- [@LouAnneSVTR](https://github.com/LouAnneSVTR) (LouAnneSVTR)
+- [@SofianeCDL](https://github.com/SofianeCDL) (SofianeCDL)
+- [@ValentinGBN](https://github.com/TinkyValou) (TinkyValou)
