@@ -39,9 +39,8 @@ git clone https://github.com/LouAnneSVTR/BOSS_Middleware_project.git
 Il faudrait idéalement 3 joueurs ou 2 en changeant la variable `MAX_PLAYERS` dans la classe `Lobby.java`. Pour cela en local il est possible de faire une copie du proje et de changer le port UDP de la classe main, d'un des deux projets. Il suffira d'utiliser l'adresse IP locale: `127.0.0.1` pour se connecter aux autres joueurs.
 
 ```
-cd existing_repo
-bash launch.sh
-./launch.sh
+cd BOSS_Middleware_project/
+mvn exec:java
 ```
 
 Ou via Intellij, exécuter la classe `Main.java`.
