@@ -8,6 +8,7 @@ L'objectif principal est de développer une infrastructure réseau supportant un
 
 ### Outils Utilisés
 - Java 1.17
+- Maven
 
 ### Architecture du Projet
 
