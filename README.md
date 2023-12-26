@@ -56,12 +56,6 @@ public static final int LOBBY_PORT = 5006;
 
 [Demo Middleware Video](https://streamable.com/ub0yd1 "Demo Middleware Video")
 
-<iframe width="560" height="315"
-src="https://streamable.com/ub0yd1" 
-frameborder="0" 
-allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-allowfullscreen></iframe>
-
 ## Auteurs
 - [@HugoCH](https://github.com/faceslog) (faceslog)
 - [@LouAnneSVTR](https://github.com/LouAnneSVTR) (LouAnneSVTR)
